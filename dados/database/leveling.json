@@ -1,0 +1,97 @@
+{
+  "users": {},
+  "patents": [
+    {
+      "name": "Iniciante",
+      "minLevel": 1
+    },
+    {
+      "name": "Aprendiz",
+      "minLevel": 2
+    },
+    {
+      "name": "Explorador",
+      "minLevel": 5
+    },
+    {
+      "name": "Aventureiro",
+      "minLevel": 10
+    },
+    {
+      "name": "Veterano",
+      "minLevel": 15
+    },
+    {
+      "name": "Mestre",
+      "minLevel": 20
+    },
+    {
+      "name": "Lenda",
+      "minLevel": 25
+    },
+    {
+      "name": "Herói",
+      "minLevel": 30
+    },
+    {
+      "name": "Conquistador",
+      "minLevel": 35
+    },
+    {
+      "name": "Imperador",
+      "minLevel": 40
+    },
+    {
+      "name": "Deus",
+      "minLevel": 50
+    },
+    {
+      "name": "Titã",
+      "minLevel": 60
+    },
+    {
+      "name": "Soberano",
+      "minLevel": 70
+    },
+    {
+      "name": "Celestial",
+      "minLevel": 80
+    },
+    {
+      "name": "Imortal",
+      "minLevel": 90
+    },
+    {
+      "name": "Divindade",
+      "minLevel": 100
+    },
+    {
+      "name": "Cosmico",
+      "minLevel": 120
+    },
+    {
+      "name": "Eterno",
+      "minLevel": 140
+    },
+    {
+      "name": "Supremo",
+      "minLevel": 160
+    },
+    {
+      "name": "Omnipotente",
+      "minLevel": 180
+    },
+    {
+      "name": "Transcendente",
+      "minLevel": 200
+    },
+    {
+      "name": "Absoluto",
+      "minLevel": 250
+    },
+    {
+      "name": "Infinito",
+      "minLevel": 300
+    }
+  ]
+}

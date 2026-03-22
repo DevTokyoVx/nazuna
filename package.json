@@ -1,0 +1,42 @@
+{
+    "name": "nazuna",
+    "version": "9.0.1",
+    "description": "Bot de whatsapp atualizada",
+    "type": "module",
+    "main": "dados/src/connect.js",
+    "scripts": {
+        "start": "node dados/src/.scripts/start.js",
+        "dev": "nodemon dados/src/.scripts/start.js",
+        "config": "node dados/src/.scripts/config.js",
+        "config:install": "node dados/src/.scripts/config.js --install",
+        "update": "node dados/src/.scripts/update.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DevTokyoVx/nazuna"
+    },
+    "homepage": "https://vexapicom.br",
+    "author": "Tokyo",
+    "license": "ISC",
+    "dependencies": {
+        "@hapi/boom": "^10.0.1",
+        "axios": "^1.13.2",
+        "cheerio": "^1.2.0",
+        "fluent-ffmpeg": "^2.1.3",
+        "linkedom": "^0.18.12",
+        "node-cache": "^5.1.2",
+        "node-cron": "^4.2.1",
+        "node-webpmux": "^3.2.1",
+        "pino": "^10.1.0",
+        "qrcode-terminal": "^0.12.0",
+        "whaileys": "latest",
+        "yt-search": "^2.13.1"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.4"
+    },
+    "engines": {
+        "node": ">=20.0.0",
+        "npm": ">=9.0.0"
+    }
+}

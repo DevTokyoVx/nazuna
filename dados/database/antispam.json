@@ -1,0 +1,8 @@
+{
+  "enabled": false,
+  "limit": 5,
+  "interval": 10,
+  "blockTime": 600,
+  "users": {},
+  "blocks": {}
+}

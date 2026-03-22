@@ -1,0 +1,65 @@
+{
+  "278696501993618@lid_nazuna": {
+    "userId": "278696501993618@lid_nazuna",
+    "nome": "Dev tokyo",
+    "apelidos": [],
+    "preferencias": {
+      "assuntos_favoritos": [],
+      "gostos": [],
+      "nao_gostos": [],
+      "hobbies": [],
+      "estilo_conversa": "casual",
+      "usa_emojis": true,
+      "formal": false
+    },
+    "informacoes_pessoais": {
+      "idade": null,
+      "localizacao": null,
+      "profissao": null,
+      "relacionamento": null,
+      "familia": []
+    },
+    "historico_conversa": {
+      "total_mensagens": 2,
+      "primeira_conversa": "2026-03-20T19:12:09.000Z",
+      "ultima_conversa": "2026-03-20T19:12:18.000Z",
+      "frequencia_interacao": "baixa",
+      "topicos_recentes": []
+    },
+    "padroes_comportamento": {
+      "horarios_ativos": {
+        "16": 2
+      },
+      "dias_semana_ativos": {
+        "sexta-feira": 2
+      },
+      "humor_comum": "neutro",
+      "tipo_mensagens": {
+        "perguntas": 0,
+        "afirmacoes": 0,
+        "emocoes": 0,
+        "comandos": 0
+      }
+    },
+    "relacionamento_nazuna": {
+      "nivel_intimidade": 1,
+      "apelido_nazuna": null,
+      "memorias_especiais": [],
+      "conversas_marcantes": [],
+      "sentimento": "neutro"
+    },
+    "notas_importantes": [
+      {
+        "texto": "Primeira conversa com Dev tokyo, iniciou com um simples 'oii'",
+        "data": "2026-03-20T19:12:12.000Z",
+        "relevancia": "alta"
+      },
+      {
+        "texto": "Dev tokyo não conhece a Nazuna, primeira interação entre eles",
+        "data": "2026-03-20T19:12:25.000Z",
+        "relevancia": "alta"
+      }
+    ],
+    "ultima_atualizacao": "2026-03-20T19:12:25.000Z"
+  }
+}

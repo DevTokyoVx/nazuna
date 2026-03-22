@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "message": "❌ Comando não encontrado! Tente {prefix}menu para ver todos os comandos disponíveis.",
+  "style": "friendly",
+  "variables": {
+    "command": "{command}",
+    "prefix": "{prefix}",
+    "user": "{user}",
+    "botName": "{botName}",
+    "userName": "{userName}"
+  }
+}

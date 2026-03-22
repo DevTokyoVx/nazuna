@@ -1,0 +1,554 @@
+[
+    {
+        "option1": "usar meias furadas",
+        "option2": "usar sapatos sujos"
+    },
+    {
+        "option1": "estar sempre 10 minutos atrasado",
+        "option2": "estar sempre 20 minutos adiantado"
+    },
+    {
+        "option1": "saber ler lábios",
+        "option2": "saber a linguagem de sinais"
+    },
+    {
+        "option1": "ser fluente em todos os idiomas",
+        "option2": "saber tocar todos os instrumentos musicais"
+    },
+    {
+        "option1": "sempre ficar preso no trânsito",
+        "option2": "ter internet ruim"
+    },
+    {
+        "option1": "ser abduzido por alienígenas",
+        "option2": "possuído por um demônio"
+    },
+    {
+        "option1": "poder voar",
+        "option2": "poder ficar invisível"
+    },
+    {
+        "option1": "viver 100 anos no passado",
+        "option2": "viver 100 anos no futuro"
+    },
+    {
+        "option1": "participar de um reality show",
+        "option2": "ficar desempregado por 2 anos"
+    },
+    {
+        "option1": "viver 25 anos a mais",
+        "option2": "viver uma vida sem a necessidade de dormir"
+    },
+    {
+        "option1": "salvar um membro da sua família",
+        "option2": "salvar 1.000 estranhos"
+    },
+    {
+        "option1": "ter 10 cachorrinhos",
+        "option2": "ter 10 gatinhos"
+    },
+    {
+        "option1": "estar sempre com calor",
+        "option2": "estar sempre com frio"
+    },
+    {
+        "option1": "estar sempre com uma pedra no sapato",
+        "option2": "estar sempre com um cisco no olho"
+    },
+    {
+        "option1": "poder rever seus sonhos em vídeo",
+        "option2": "pegar no sono estalando os dedos"
+    },
+    {
+        "option1": "ficar preso num teleférico quebrado",
+        "option2": "num elevador quebrado"
+    },
+    {
+        "option1": "comer pizza todo dia",
+        "option2": "comer massa todo dia"
+    },
+    {
+        "option1": "ser pago para ler livros",
+        "option2": "assistir TV"
+    },
+    {
+        "option1": "se livrar de todos os maus motoristas",
+        "option2": "nunca mais ter que ficar numa fila"
+    },
+    {
+        "option1": "ter um salário alto num trabalho que você odeia",
+        "option2": "ter um salário baixo num trabalho que você ama"
+    },
+    {
+        "option1": "estar sozinho na floresta sendo perseguido por um urso",
+        "option2": "ter três dos seus dentes quebrados com um martelo"
+    },
+    {
+        "option1": "ser obrigado a obedecer a alguém que você odeia",
+        "option2": "dar ordens terríveis a alguém que você ama"
+    },
+    {
+        "option1": "ficar doente pelo resto da vida",
+        "option2": "matar um gatinho"
+    },
+    {
+        "option1": "não poder ter filhos",
+        "option2": "só poder conceber quíntuplos"
+    },
+    {
+        "option1": "não ter família",
+        "option2": "não ter amigos"
+    },
+    {
+        "option1": "lamber o chão de uma estação de metrô de Nova York",
+        "option2": "lamber a privada de um banheiro público"
+    },
+    {
+        "option1": "perder todas as lembranças que você fez até agora",
+        "option2": "esquecer a cada 24 horas o que aconteceu no dia anterior"
+    },
+    {
+        "option1": "jogar roleta-russa com três balas por $5.000.000",
+        "option2": "jogar roleta-russa com uma bala por $100.000"
+    },
+    {
+        "option1": "matar uma pessoa inocente",
+        "option2": "matar cinco pessoas que cometeram crimes leves"
+    },
+    {
+        "option1": "bater o dedinho do pé na quina de um móvel todos os dias",
+        "option2": "tomar banho duas vezes por semana"
+    },
+    {
+        "option1": "não ter cotovelos",
+        "option2": "não ter joelhos"
+    },
+    {
+        "option1": "ter cheiro de cachorro molhado",
+        "option2": "ter cheiro de bode"
+    },
+    {
+        "option1": "estar sempre com fome",
+        "option2": "estar sempre com sede"
+    },
+    {
+        "option1": "sempre dizer seus pensamentos em voz alta",
+        "option2": "nunca mais falar, nem mesmo em linguagem de sinais"
+    },
+    {
+        "option1": "ficar enterrado até o pescoço com o sol na cara por 8 horas",
+        "option2": "ficar enterrado até o pescoço cercado de formigas-de-fogo por 20 minutos"
+    },
+    {
+        "option1": "ser completamente louco e saber que é louco",
+        "option2": "ser completamente louco e acreditar que é são"
+    },
+    {
+        "option1": "ficar trancado num quarto constantemente escuro por uma semana",
+        "option2": "ficar trancado num quarto constantemente claro por uma semana"
+    },
+    {
+        "option1": "morrer congelado",
+        "option2": "morrer queimado"
+    },
+    {
+        "option1": "fazer uma tatuagem enorme no peito com o nome do seu parceiro",
+        "option2": "fazer uma tatuagem pequena do rosto dele no seu braço"
+    },
+    {
+        "option1": "que os animais que você toque morram",
+        "option2": "que os computadores em que você toque travem"
+    },
+    {
+        "option1": "ter superforça",
+        "option2": "ter supervelocidade"
+    },
+    {
+        "option1": "ser rico e infeliz",
+        "option2": "ser pobre e feliz"
+    },
+    {
+        "option1": "viver sem música",
+        "option2": "viver sem filmes"
+    },
+    {
+        "option1": "ter a habilidade de ler mentes",
+        "option2": "ter a habilidade de se teletransportar"
+    },
+    {
+        "option1": "nunca mais poder comer doce",
+        "option2": "nunca mais poder comer salgado"
+    },
+    {
+        "option1": "ter um carro voador",
+        "option2": "ter uma casa subaquática"
+    },
+    {
+        "option1": "ser famoso por 1 ano",
+        "option2": "ser anônimo para sempre"
+    },
+    {
+        "option1": "ter o poder de controlar o tempo",
+        "option2": "ter o poder de controlar o clima"
+    },
+    {
+        "option1": "sempre perder suas chaves",
+        "option2": "sempre perder seu celular"
+    },
+    {
+        "option1": "ter um cachorro que fala",
+        "option2": "ter um gato que cozinha"
+    },
+    {
+        "option1": "nunca mais poder usar redes sociais",
+        "option2": "nunca mais poder assistir TV"
+    },
+    {
+        "option1": "ter a habilidade de falar com animais",
+        "option2": "ter a habilidade de falar todas as línguas humanas"
+    },
+    {
+        "option1": "sempre acordar cedo",
+        "option2": "sempre dormir tarde"
+    },
+    {
+        "option1": "ter um emprego chato que paga muito",
+        "option2": "ter um emprego divertido que paga pouco"
+    },
+    {
+        "option1": "viver sem internet",
+        "option2": "viver sem ar-condicionado"
+    },
+    {
+        "option1": "ter a habilidade de parar o tempo",
+        "option2": "ter a habilidade de voltar no tempo"
+    },
+    {
+        "option1": "sempre saber a verdade",
+        "option2": "sempre acreditar em mentiras"
+    },
+    {
+        "option1": "ter um superpoder, mas nunca poder contar para ninguém",
+        "option2": "não ter superpoder, mas todo mundo achar que você tem"
+    },
+    {
+        "option1": "ter a habilidade de voar, mas só 1 metro do chão",
+        "option2": "ter a habilidade de ficar invisível, mas só por 10 segundos"
+    },
+    {
+        "option1": "sempre ter que usar roupas de frio no calor",
+        "option2": "sempre ter que usar roupas de calor no frio"
+    },
+    {
+        "option1": "ter um milhão de reais agora",
+        "option2": "ter mil reais por mês para sempre"
+    },
+    {
+        "option1": "ser um gênio em matemática",
+        "option2": "ser um gênio em artes"
+    },
+    {
+        "option1": "ter a habilidade de curar qualquer doença",
+        "option2": "ter a habilidade de acabar com a fome no mundo"
+    },
+    {
+        "option1": "sempre ganhar em jogos de azar",
+        "option2": "sempre ganhar em jogos de habilidade"
+    },
+    {
+        "option1": "ter a memória de um elefante",
+        "option2": "ter a agilidade de um guepardo"
+    },
+    {
+        "option1": "viver em um mundo sem cores",
+        "option2": "viver em um mundo sem sons"
+    },
+    {
+        "option1": "ter a habilidade de ler um livro em 1 minuto",
+        "option2": "ter a habilidade de assistir um filme em 5 minutos"
+    },
+    {
+        "option1": "sempre ter que cantar em vez de falar",
+        "option2": "sempre ter que dançar em vez de andar"
+    },
+    {
+        "option1": "ter um jardim mágico que cresce instantaneamente",
+        "option2": "ter uma cozinha que prepara qualquer comida sozinha"
+    },
+    {
+        "option1": "ser imune a picadas de insetos",
+        "option2": "ser imune a queimaduras de sol"
+    },
+    {
+        "option1": "ter a habilidade de encontrar qualquer coisa perdida",
+        "option2": "ter a habilidade de consertar qualquer coisa quebrada"
+    },
+    {
+        "option1": "sempre ter que usar sapatos apertados",
+        "option2": "sempre ter que usar roupas largas"
+    },
+    {
+        "option1": "ter um animal de estimação que é um dragão miniatura",
+        "option2": "ter um animal de estimação que é um unicórnio miniatura"
+    },
+    {
+        "option1": "sempre acordar com o cabelo perfeito",
+        "option2": "sempre acordar com a pele perfeita"
+    },
+    {
+        "option1": "ter a habilidade de falar com plantas",
+        "option2": "ter a habilidade de falar com pedras"
+    },
+    {
+        "option1": "sempre saber a resposta, mas nunca poder compartilhar",
+        "option2": "nunca saber a resposta, mas sempre poder adivinhar"
+    },
+    {
+        "option1": "ter um carro que nunca quebra",
+        "option2": "ter uma casa que nunca precisa de reparos"
+    },
+    {
+        "option1": "ser capaz de respirar debaixo d'água",
+        "option2": "ser capaz de sobreviver no espaço sem traje"
+    },
+    {
+        "option1": "ter a habilidade de desenhar perfeitamente",
+        "option2": "ter a habilidade de tocar qualquer instrumento perfeitamente"
+    },
+    {
+        "option1": "sempre ter que andar de ponta-cabeça",
+        "option2": "sempre ter que andar de costas"
+    },
+    {
+        "option1": "ter um guarda-roupa infinito",
+        "option2": "ter uma geladeira que nunca fica vazia"
+    },
+    {
+        "option1": "ser capaz de viajar para qualquer lugar do mundo de graça",
+        "option2": "ser capaz de comer em qualquer restaurante de graça"
+    },
+    {
+        "option1": "ter a habilidade de aprender qualquer coisa em 1 dia",
+        "option2": "ter a habilidade de esquecer qualquer coisa em 1 dia"
+    },
+    {
+        "option1": "sempre ter que rir quando está triste",
+        "option2": "sempre ter que chorar quando está feliz"
+    },
+    {
+        "option1": "ter um robô que faz todas as tarefas domésticas",
+        "option2": "ter um robô que faz todo o seu trabalho"
+    },
+    {
+        "option1": "ser capaz de ver 10 minutos no futuro",
+        "option2": "ser capaz de voltar 10 minutos no passado"
+    },
+    {
+        "option1": "ter a habilidade de mudar de cor como um camaleão",
+        "option2": "ter a habilidade de brilhar no escuro"
+    },
+    {
+        "option1": "sempre ter que falar em rimas",
+        "option2": "sempre ter que falar em versos"
+    },
+    {
+        "option1": "ter um superpoder que só funciona à noite",
+        "option2": "ter um superpoder que só funciona de dia"
+    },
+    {
+        "option1": "ser capaz de parar de envelhecer",
+        "option2": "ser capaz de voltar a qualquer idade que quiser"
+    },
+    {
+        "option1": "ter a habilidade de conversar com seus ancestrais",
+        "option2": "ter a habilidade de conversar com seus descendentes"
+    },
+    {
+        "option1": "sempre ter que usar óculos escuros, mesmo à noite",
+        "option2": "sempre ter que usar chapéu, mesmo dentro de casa"
+    },
+    {
+        "option1": "ter um mapa que mostra a localização de qualquer coisa perdida",
+        "option2": "ter um relógio que mostra o tempo restante de sua vida"
+    },
+    {
+        "option1": "ser capaz de se transformar em qualquer animal",
+        "option2": "ser capaz de se transformar em qualquer pessoa"
+    },
+    {
+        "option1": "ter um jardim que cresce comida instantaneamente",
+        "option2": "ter uma árvore que dá dinheiro"
+    },
+    {
+        "option1": "sempre ter que andar de skate",
+        "option2": "sempre ter que andar de patins"
+    },
+    {
+        "option1": "ter a habilidade de ver no escuro",
+        "option2": "ter a habilidade de ver através das paredes"
+    },
+    {
+        "option1": "ser capaz de parar o tempo por 1 hora por dia",
+        "option2": "ser capaz de voltar no tempo por 1 hora por dia"
+    },
+    {
+        "option1": "ter um assistente pessoal robô",
+        "option2": "ter um carro autônomo que dirige sozinho"
+    },
+    {
+        "option1": "sempre ter que falar em voz alta",
+        "option2": "sempre ter que sussurrar"
+    },
+    {
+        "option1": "ter a habilidade de se clonar",
+        "option2": "ter a habilidade de se teletransportar"
+    },
+    {
+        "option1": "ser capaz de prever o clima com 100% de precisão",
+        "option2": "ser capaz de prever o trânsito com 100% de precisão"
+    },
+    {
+        "option1": "ter um livro que escreve suas histórias sozinho",
+        "option2": "ter um diário que revela segredos do futuro"
+    },
+    {
+        "option1": "sempre ter que usar roupas de super-herói",
+        "option2": "sempre ter que usar roupas de palhaço"
+    },
+    {
+        "option1": "ter a habilidade de se comunicar com extraterrestres",
+        "option2": "ter a habilidade de se comunicar com fantasmas"
+    },
+    {
+        "option1": "ser capaz de comer o quanto quiser sem engordar",
+        "option2": "ser capaz de dormir o quanto quiser sem se sentir cansado"
+    },
+    {
+        "option1": "ter um telefone que nunca descarrega",
+        "option2": "ter um computador que nunca trava"
+    },
+    {
+        "option1": "sempre ter que andar de bicicleta",
+        "option2": "sempre ter que andar de patinete"
+    },
+    {
+        "option1": "ter a habilidade de se tornar invisível por 1 hora por dia",
+        "option2": "ter a habilidade de voar por 1 hora por dia"
+    },
+    {
+        "option1": "ser capaz de ler um livro em 5 minutos",
+        "option2": "ser capaz de assistir um filme em 10 minutos"
+    },
+    {
+        "option1": "ter um relógio que adiciona 1 hora ao seu dia",
+        "option2": "ter um relógio que congela o tempo por 1 hora"
+    },
+    {
+        "option1": "sempre ter que usar roupas de banho",
+        "option2": "sempre ter que usar roupas de frio"
+    },
+    {
+        "option1": "ter a habilidade de se transformar em água",
+        "option2": "ter a habilidade de se transformar em fogo"
+    },
+    {
+        "option1": "ser capaz de falar com plantas e elas crescerem instantaneamente",
+        "option2": "ser capaz de falar com animais e eles obedecerem você"
+    },
+    {
+        "option1": "ter um guarda-chuva que te faz flutuar",
+        "option2": "ter um chapéu que te faz ficar invisível"
+    },
+    {
+        "option1": "sempre ter que comer comidas picantes",
+        "option2": "sempre ter que comer comidas doces"
+    },
+    {
+        "option1": "ter a habilidade de se transformar em uma nuvem",
+        "option2": "ter a habilidade de se transformar em uma árvore"
+    },
+    {
+        "option1": "ser capaz de ver 24 horas no futuro",
+        "option2": "ser capaz de voltar 24 horas no passado"
+    },
+    {
+        "option1": "ter um espelho que mostra seu futuro",
+        "option2": "ter um espelho que mostra seu passado"
+    },
+    {
+        "option1": "sempre ter que usar roupas brilhantes",
+        "option2": "sempre ter que usar roupas escuras"
+    },
+    {
+        "option1": "ter a habilidade de se transformar em vento",
+        "option2": "ter a habilidade de se transformar em pedra"
+    },
+    {
+        "option1": "ser capaz de se comunicar com pessoas através de pensamentos",
+        "option2": "ser capaz de se comunicar com animais através de pensamentos"
+    },
+    {
+        "option1": "ter um tapete mágico que voa",
+        "option2": "ter uma mochila que te teleporta para qualquer lugar"
+    },
+    {
+        "option1": "sempre ter que andar de costas",
+        "option2": "sempre ter que andar de lado"
+    },
+    {
+        "option1": "ter a habilidade de se transformar em gelo",
+        "option2": "ter a habilidade de se transformar em areia"
+    },
+    {
+        "option1": "ser capaz de ver a vida de outras pessoas em sonhos",
+        "option2": "ser capaz de ver seu próprio futuro em sonhos"
+    },
+    {
+        "option1": "ter um lápis que desenha coisas que se tornam reais",
+        "option2": "ter uma caneta que escreve coisas que se tornam realidade"
+    },
+    {
+        "option1": "sempre ter que usar roupas de couro",
+        "option2": "sempre ter que usar roupas de algodão"
+    },
+    {
+        "option1": "ter a habilidade de se transformar em luz",
+        "option2": "ter a habilidade de se transformar em sombra"
+    },
+    {
+        "option1": "ser capaz de se comunicar com o vento",
+        "option2": "ser capaz de se comunicar com a água"
+    },
+    {
+        "option1": "ter um relógio que te faz voltar no tempo 1 minuto",
+        "option2": "ter um relógio que te faz avançar no tempo 1 minuto"
+    },
+    {
+        "option1": "sempre ter que usar roupas de festa",
+        "option2": "sempre ter que usar roupas de academia"
+    },
+    {
+        "option1": "ter a habilidade de se transformar em neblina",
+        "option2": "ter a habilidade de se transformar em fumaça"
+    },
+    {
+        "option1": "ser capaz de se comunicar com as estrelas",
+        "option2": "ser capaz de se comunicar com a lua"
+    },
+    {
+        "option1": "ter um anel que te faz flutuar",
+        "option2": "ter um colar que te faz ficar invisível"
+    },
+    {
+        "option1": "sempre ter que usar roupas de couro",
+        "option2": "sempre ter que usar roupas de seda"
+    },
+    {
+        "option1": "ter a habilidade de se transformar em arco-íris",
+        "option2": "ter a habilidade de se transformar em tempestade"
+    },
+    {
+        "option1": "ser capaz de se comunicar com o sol",
+        "option2": "ser capaz de se comunicar com as nuvens"
+    }
+]
