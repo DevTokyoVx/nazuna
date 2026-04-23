@@ -1,5 +1,4 @@
 {
-  "globalMode": false,
-  "groups": {
-  }
+  "globalMode": true,
+  "groups": {}
 }

@@ -443,76 +443,71 @@ function formatMessageText(template, replacements) {
     return text;
 }
 
-async function createGroupMessage(NazunaSock, groupMetadata, participants, settings, isWelcome = true) {
 
-    const globalJson = JSON.parse(
-        await fs.readFile(DATABASE_DIR + '/global.json', 'utf-8')
+async function createGroupMessage(NazunaSock, groupMetadata, participants, settings, isWelcome = true) {
+  const globalJson = JSON.parse(
+    await fs.readFile(DATABASE_DIR + '/global.json', 'utf-8')
+  );
+
+  const mentions = participants.map(p => p);
+
+  const replacements = {
+    '#numerodele#': participants.map(p => `@${p.split('@')[0]}`).join(', '),
+    '#nomedogp#': groupMetadata.subject,
+    '#desc#': groupMetadata.desc || 'Nenhuma',
+    '#membros#': groupMetadata.participants.length,
+  };
+
+  const defaultText = isWelcome
+    ? (globalJson.textbv || "╭━━━⊱ 🌟 *BEM-VINDO(A/S)!* 🌟 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🏠 Grupo: *#nomedogp#*\n│ 👥 Membros: *#membros#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n✨ *Seja bem-vindo(a/s) ao grupo!* ✨")
+    : (globalJson.exit?.text || "╭━━━⊱ 👋 *ATÉ LOGO!* 👋 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🚪 Saiu do grupo\n│ *#nomedogp#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n💫 *Até a próxima!* 💫");
+
+  const text = formatMessageText(settings.text || defaultText, replacements);
+
+  const message = {
+    text,
+    mentions
+  };
+
+  if (settings.photoType === 'api' && isWelcome) {
+    let profilePicUrl = 'https://raw.githubusercontent.com/nazuninha/uploads/main/outros/1747053564257_bzswae.bin';
+
+    if (participants.length === 1) {
+      profilePicUrl = await NazunaSock.profilePictureUrl(participants[0], 'image')
+        .catch(() => profilePicUrl);
+    }
+
+    const nome = participants.length === 1
+      ? participants[0].split('@')[0]
+      : `${participants.length} membros`;
+
+    const result = await canvas.gerarwelcomecard(
+      profilePicUrl,
+      nome,
+      'Bem vindo (a)!',
+      globalJson.welcomecard?.fundo || null,
+      globalJson.welcomecard?.corMoldura || null,
+      globalJson.welcomecard?.corLinhas || null,
+      false
     );
 
-    const mentions = participants.map(p => p);
-
-    const replacements = {
-        '#numerodele#': participants.map(p => `@${p.split('@')[0]}`).join(', '),
-        '#nomedogp#': groupMetadata.subject,
-        '#desc#': groupMetadata.desc || 'Nenhuma',
-        '#membros#': groupMetadata.participants.length,
-    };
-
-    const defaultText = isWelcome ?
-        (globalJson.textbv || "╭━━━⊱ 🌟 *BEM-VINDO(A/S)!* 🌟 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🏠 Grupo: *#nomedogp#*\n│ 👥 Membros: *#membros#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n✨ *Seja bem-vindo(a/s) ao grupo!* ✨") :
-        (globalJson.exit?.text || "╭━━━⊱ 👋 *ATÉ LOGO!* 👋 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🚪 Saiu do grupo\n│ *#nomedogp#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n💫 *Até a próxima!* 💫");
-
-    const text = formatMessageText(settings.text || defaultText, replacements);
-
-    const message = {
-        text,
-        mentions
-    };
-
-
-    if (settings.photoType === 'api' && isWelcome) {
-
-        let profilePicUrl = 'https://raw.githubusercontent.com/nazuninha/uploads/main/outros/1747053564257_bzswae.bin';
-
-        if (participants.length === 1) {
-            profilePicUrl = await NazunaSock.profilePictureUrl(participants[0], 'image')
-                .catch(() => profilePicUrl);
-        }
-
-        const nome = participants.length === 1
-            ? participants[0].split('@')[0]
-            : `${participants.length} membros`;
-
-        const result = await canvas.gerarwelcomecard(
-            profilePicUrl,
-            nome,
-            'Bem vindo (a)!',
-            globalJson.welcomecard?.fundo || null,
-            globalJson.welcomecard?.corMoldura || null,
-            globalJson.welcomecard?.corLinhas || null,
-            false
-        );
-
-        if (result?.ok) {
-            message.image = { url: result.url };
-            message.caption = text;
-            delete message.text;
-        }
-
+    if (result?.ok) {
+      message.image = { url: result.url };
+      message.caption = text;
+      delete message.text;
     }
+  } else if (settings.photoType === 'custom' && settings.image) {
+    message.image = { url: settings.image };
+    message.caption = text;
+    delete message.text;
+  } else if (globalJson.welcomecard?.fundo) {
+    message.image = { url: globalJson.welcomecard.fundo };
+    message.caption = text;
+    delete message.text;
+  }
 
-
-    else if (globalJson.welcomecard?.fundo) {
-
-        message.image = { url: globalJson.welcomecard.fundo };
-        message.caption = text;
-        delete message.text;
-    }
-
-    return message;
+  return message;
 }
-
-
 
 
 
@@ -1327,7 +1322,7 @@ async function createBotSocket(authDir) {
                     }
 
                 } catch (e) {
-                    console.error(`❌ Erro no groups.update (${ev.id}): ${e.message}`);
+//                    console.error(`❌ Erro no groups.update (${ev.id}): ${e.message}`);
                 }
             });
 

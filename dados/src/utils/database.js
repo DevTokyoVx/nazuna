@@ -1118,44 +1118,122 @@ const getGroupRentalStatus = groupId => {
 };
 
 const setGroupRental = (groupId, durationDays) => {
+
+
   if (!groupId || typeof groupId !== 'string' || !isGroupId(groupId)) {
+    console.log('❌ ID inválido');
     return {
       success: false,
-      message: '🤔 ID de grupo inválido! Verifique se o ID está correto (geralmente termina com @g.us).'
+      message: '🤔 ID de grupo inválido! (deve terminar com @g.us)'
     };
   }
-  let rentalData = loadRentalData();
-  let expiresAt = null;
-  let message = '';
+
+  let rentalData;
+  try {
+    const raw = fs.readFileSync(ALUGUEIS_FILE, 'utf-8');
+    rentalData = JSON.parse(raw);
+
+  } catch (e) {
+    console.log('⚠️ Falha ao ler arquivo, recriando estrutura...');
+    rentalData = { globalMode: false, groups: {} };
+  }
+
+
+
+  if (!rentalData.groups || typeof rentalData.groups !== 'object') {
+    console.log('⚠️ groups inválido → recriado');
+    rentalData.groups = {};
+  }
+
+  let expiresAt;
+  let message;
+
   if (durationDays === 'permanent') {
     expiresAt = 'permanent';
-    message = `✅ Aluguel permanente ativado!`;
+    message = '✅ Aluguel permanente ativado!';
+
   } else if (typeof durationDays === 'number' && durationDays > 0) {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + durationDays);
+
     expiresAt = expirationDate.toISOString();
-    message = `✅ Aluguel ativado por ${durationDays} dias! Expira em: ${expirationDate.toLocaleDateString('pt-BR')}.`;
+    message = `✅ Aluguel por ${durationDays} dias (até ${expirationDate.toLocaleDateString('pt-BR')})`;
+
+
   } else {
+    console.log('❌ Duração inválida');
     return {
       success: false,
-      message: '🤔 Duração inválida! Use um número de dias (ex: 30) ou a palavra "permanente".'
+      message: '🤔 Duração inválida!'
     };
   }
+
+
   rentalData.groups[groupId] = {
+    ...(rentalData.groups[groupId] || {}),
     expiresAt
   };
-  if (saveRentalData(rentalData)) {
-    return {
-      success: true,
-      message: message
-    };
-  } else {
+
+
+
+
+  try {
+    fs.writeFileSync(ALUGUEIS_FILE, JSON.stringify(rentalData, null, 2));
+
+  } catch (e) {
+    console.log('💥 ERRO AO SALVAR:', e);
     return {
       success: false,
-      message: '😥 Oops! Tive um problema ao salvar as informações de aluguel deste grupo.'
+      message: 'Erro ao salvar JSON'
     };
   }
+
+  let checkNow;
+  try {
+    checkNow = JSON.parse(fs.readFileSync(ALUGUEIS_FILE, 'utf-8'));
+  } catch (e) {
+    console.log('💥 ERRO ao reler arquivo:', e);
+    checkNow = null;
+  }
+
+
+
+  const existsNow = checkNow?.groups?.[groupId];
+
+  if (existsNow) {
+    console.log('✅ Persistência OK imediata');
+  } else {
+    console.log('💥 NÃO persistiu imediatamente');
+  }
+
+
+  setTimeout(() => {
+    try {
+      const late = JSON.parse(fs.readFileSync(ALUGUEIS_FILE, 'utf-8'));
+      const stillExists = late?.groups?.[groupId];
+
+      console.log('🕒 CHECK 5s depois:\n', JSON.stringify(late, null, 2));
+
+      if (!stillExists) {
+        console.log('🚨 OVERWRITE DETECTADO (outro código apagou)');
+      } else {
+        console.log('🟢 Continua salvo após 5s');
+      }
+    } catch (e) {
+      console.log('💥 ERRO no check tardio:', e);
+    }
+  }, 5000);
+
+
+
+  return {
+    success: !!existsNow,
+    message: existsNow
+      ? message
+      : '❌ Falha ao persistir aluguel'
+  };
 };
+
 
 const loadActivationCodes = () => {
   return loadJsonFile(CODIGOS_ALUGUEL_FILE, {

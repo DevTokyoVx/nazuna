@@ -18,6 +18,51 @@ import { parseHTML } from 'linkedom';
 import axios from 'axios';
 import pathz from 'path';
 import fs from 'fs';
+
+const originalWriteFileSync = fs.writeFileSync;
+const originalWriteFile = fs.writeFile;
+
+function isAluguelFile(file) {
+  return typeof file === 'string' && file.includes('alugueis');
+}
+
+// 🔴 intercepta writeFileSync
+fs.writeFileSync = function (file, data, ...args) {
+  if (isAluguelFile(file)) {
+    console.log('\n🚨🚨🚨 WRITE DETECTADO (SYNC) 🚨🚨🚨');
+    console.log('📁 Arquivo:', file);
+
+    try {
+      const parsed = JSON.parse(data);
+      console.log('📊 Conteúdo que vai salvar:\n', JSON.stringify(parsed, null, 2));
+    } catch {
+      console.log('📊 Conteúdo bruto:', data);
+    }
+
+    console.trace('📍 STACK TRACE (quem chamou):');
+  }
+
+  return originalWriteFileSync.call(this, file, data, ...args);
+};
+
+// 🔴 intercepta writeFile async também
+fs.writeFile = function (file, data, ...args) {
+  if (isAluguelFile(file)) {
+    console.log('\n🚨🚨🚨 WRITE DETECTADO (ASYNC) 🚨🚨🚨');
+    console.log('📁 Arquivo:', file);
+
+    try {
+      const parsed = JSON.parse(data);
+      console.log('📊 Conteúdo que vai salvar:\n', JSON.stringify(parsed, null, 2));
+    } catch {
+      console.log('📊 Conteúdo bruto:', data);
+    }
+
+    console.trace('📍 STACK TRACE (quem chamou):');
+  }
+
+  return originalWriteFile.call(this, file, data, ...args);
+};
 import { readFile, writeFile } from 'fs/promises';
 import os from 'os';
 import https from 'https';
@@ -455,7 +500,6 @@ const {
 
 
 async function createGroupMessage(NazunaSock, groupMetadata, participants, settings, isWelcome = true) {
-
   const globalJson = JSON.parse(
     fs.readFileSync(DATABASE_DIR + '/global.json', 'utf-8')
   );
@@ -469,9 +513,9 @@ async function createGroupMessage(NazunaSock, groupMetadata, participants, setti
     '#membros#': groupMetadata.participants.length,
   };
 
-  const defaultText = isWelcome ?
-    (globalJson.textbv || "╭━━━⊱ 🌟 *BEM-VINDO(A/S)!* 🌟 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🏠 Grupo: *#nomedogp#*\n│ 👥 Membros: *#membros#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n✨ *Seja bem-vindo(a/s) ao grupo!* ✨") :
-    (globalJson.exit?.text || "╭━━━⊱ 👋 *ATÉ LOGO!* 👋 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🚪 Saiu do grupo\n│ *#nomedogp#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n💫 *Até a próxima!* 💫");
+  const defaultText = isWelcome
+    ? (globalJson.textbv || "╭━━━⊱ 🌟 *BEM-VINDO(A/S)!* 🌟 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🏠 Grupo: *#nomedogp#*\n│ 👥 Membros: *#membros#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n✨ *Seja bem-vindo(a/s) ao grupo!* ✨")
+    : (globalJson.exit?.text || "╭━━━⊱ 👋 *ATÉ LOGO!* 👋 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🚪 Saiu do grupo\n│ *#nomedogp#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n💫 *Até a próxima!* 💫");
 
   const text = formatMessageText(settings.text || defaultText, replacements);
 
@@ -480,9 +524,7 @@ async function createGroupMessage(NazunaSock, groupMetadata, participants, setti
     mentions
   };
 
-
   if (settings.photoType === 'api' && isWelcome) {
-
     let profilePicUrl = 'https://raw.githubusercontent.com/nazuninha/uploads/main/outros/1747053564257_bzswae.bin';
 
     if (participants.length === 1) {
@@ -509,12 +551,11 @@ async function createGroupMessage(NazunaSock, groupMetadata, participants, setti
       message.caption = text;
       delete message.text;
     }
-
-  }
-
-
-  else if (globalJson.welcomecard?.fundo) {
-
+  } else if (settings.photoType === 'custom' && settings.image) {
+    message.image = { url: settings.image };
+    message.caption = text;
+    delete message.text;
+  } else if (globalJson.welcomecard?.fundo) {
     message.image = { url: globalJson.welcomecard.fundo };
     message.caption = text;
     delete message.text;
@@ -2497,92 +2538,6 @@ async function NazuninhaBotExec(nazu, info, store, messagesCache, rentalExpirati
 
 
 
-    const filePath = path.join(__dirname, '../database/dono/alugueisnew.json');
-    async function verificarAlugueis(nazu) {
-      const numeroDonoFormatado = numerodono ? String(numerodono).replace(/\D/g, '') : 'Não configurado';
-
-      if (!nazu?.groupMetadata) {
-        console.log('⚠️ Bot não está pronto ainda');
-        return;
-      }
-
-      const manager = new RentalExpirationManager(nazu, {
-        ownerName: nomedono,
-        ownerNumber: "wa.me/" + numeroDonoFormatado
-      });
-
-      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-      const agora = Date.now();
-      const UM_DIA = 24 * 60 * 60 * 1000;
-
-      for (const groupId in data.groups) {
-        const grupo = data.groups[groupId];
-        if (!grupo.expiresAt) continue;
-
-        const expira = new Date(grupo.expiresAt).getTime();
-        const tempoRestante = expira - agora;
-
-        let groupMetadata;
-
-        try {
-          groupMetadata = await nazu.groupMetadata(groupId);
-        } catch {
-          console.log('⚠️ Erro ao pegar metadata:', groupId);
-          continue;
-        }
-
-        const ownerInfo = {
-          name: nomedono || 'Dono Não Configurado',
-          number: "wa.me/" + numeroDonoFormatado
-        };
-
-        const diffMs = expira - agora;
-        const diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-
-        if (
-          diasRestantes === 1 &&
-          grupo.lastNotified !== 'final'
-        ) {
-          const msg = manager.buildExpirationMessage(
-            'final',
-            1,
-            groupMetadata,
-            ownerInfo
-          );
-
-          await nazu.sendMessage(groupId, { text: msg });
-          grupo.lastNotified = 'final';
-        }
-
-
-        if (
-          diasRestantes <= 0 &&
-          grupo.lastNotified !== 'expired'
-        ) {
-          const msg = manager.buildExpirationMessage(
-            'expired',
-            0,
-            groupMetadata,
-            ownerInfo
-          );
-
-          await nazu.sendMessage(groupId, { text: msg });
-          grupo.lastNotified = 'expired';
-        }
-      }
-
-
-      const latest = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-
-      latest.groups = data.groups;
-
-      fs.writeFileSync(filePath, JSON.stringify(latest, null, 2));
-    }
-
-
-    verificarAlugueis(nazu);
-
     if (isGroup && !isCmd && body && /\b[A-F0-9]{8}\b/.test(body.toUpperCase())) {
       const potentialCode = body.match(/\b[A-F0-9]{8}\b/)[0].toUpperCase();
       const validation = validateActivationCode(potentialCode);
@@ -2635,6 +2590,7 @@ async function NazuninhaBotExec(nazu, info, store, messagesCache, rentalExpirati
         console.error("Erro no sistema de contagem de mensagens:", error);
       }
     }
+
     if (isGroup && groupData.levelingEnabled) {
       try {
         const levelingData = loadLevelingSafe();
@@ -4110,13 +4066,11 @@ packname: `${nomebot}`,            type: isVideo ? 'video' : 'image',
         }
       }
     }
-    
 
-if (isGroup && groupData.antistickerplus && !isGroupAdmin && !isOwner && !isParceiro) {
 
+
+if (  isGroup &&  groupData.antistickerplus &&  !isGroupAdmin &&  !isOwner &&  !isParceiro &&  info?.message) {
   try {
-
-    if (!info?.message) return;
 
     const msg = info.message;
 
@@ -4126,40 +4080,37 @@ if (isGroup && groupData.antistickerplus && !isGroupAdmin && !isOwner && !isParc
       msg?.extendedTextMessage?.contextInfo?.quotedMessage?.stickerMessage ||
       msg?.extendedTextMessage?.contextInfo?.quotedMessage?.lottieStickerMessage?.message?.stickerMessage;
 
-    if (!stickerMsg) return;
+    if (stickerMsg && stickerMsg?.isLottie === true) {
 
-    const isLottie = stickerMsg?.isLottie === true;
+      if (groupData.antistickerplus_apagar || groupData.antistickerplus_remover) {
+        await nazu.sendMessage(from, {
+          delete: {
+            remoteJid: from,
+            fromMe: false,
+            id: info.key.id,
+            participant: sender
+          }
+        });
+      }
 
-    if (!isLottie) return;
+      if (groupData.antistickerplus_remover) {
+        await reply(
+          `🚫 @${getUserName(sender)}, este grupo não permite esse tipo de figurinha do whatsapp plus.`,
+          { mentions: [sender] }
+        );
+      }
 
-    if (groupData.antistickerplus_apagar || groupData.antistickerplus_remover) {
-      await nazu.sendMessage(from, {
-        delete: {
-          remoteJid: from,
-          fromMe: false,
-          id: info.key.id,
-          participant: sender
-        }
-      });
+      if (groupData.antistickerplus_remover && isBotAdmin) {
+        await nazu.groupParticipantsUpdate(from, [sender], 'remove');
+      }
+
     }
-
-    if (groupData.antistickerplus_remover) {
-      await reply(
-        `🚫 @${getUserName(sender)}, este grupo não permite esse tipo de figurinha do whatsapp plus (diferente das figurinhas normais).`,
-        { mentions: [sender] }
-      );
-    }
-
-    if (groupData.antistickerplus_remover && isBotAdmin) {
-      await nazu.groupParticipantsUpdate(from, [sender], 'remove');
-    }
-
-    return;
 
   } catch (err) {
     console.error("[AntiStickerPlus] Erro:", err);
   }
 }
+
     const botStateFile = pathz.join(DATABASE_DIR, 'botState.json');
     if (botState.status === 'off' && !isOwner) return;
     if (botState.viewMessages) nazu.readMessages([info.key]);
@@ -16564,27 +16515,60 @@ Exemplo: ${prefix}tradutor espanhol | Olá mundo! ✨`);
           await reply('Ocorreu um erro ao estender aluguel em todos os grupos.');
         }
         break;
-      case 'addaluguel':
-        if (!isOwner) return reply("🚫 Apenas o Dono principal pode adicionar aluguel!");
-        if (!isGroup) return reply("Este comando só pode ser usado em grupos.");
-        try {
-          const parts = q.toLowerCase().trim().split(' ');
-          const durationArg = parts[0];
-          let durationDays = null;
-          if (durationArg === 'permanente') {
+
+
+case 'addaluguel':
+    console.log('📌 Comando addaluguel iniciado');
+    console.log('👤 isOwner:', isOwner);
+    console.log('👥 isGroup:', isGroup);
+    console.log('📝 Texto recebido (q):', q);
+    console.log('🏷️ Grupo ID (from):', from);
+
+    if (!isOwner) {
+        console.log('🚫 Bloqueado: usuário não é dono');
+        return reply("🚫 Apenas o Dono principal pode adicionar aluguel!");
+    }
+
+    if (!isGroup) {
+        console.log('🚫 Bloqueado: comando não foi usado em grupo');
+        return reply("Este comando só pode ser usado em grupos.");
+    }
+
+    try {
+        const parts = q.toLowerCase().trim().split(' ');
+        console.log('🔍 Partes do argumento:', parts);
+
+        const durationArg = parts[0];
+        console.log('⏳ Duração recebida:', durationArg);
+
+        let durationDays = null;
+
+        if (durationArg === 'permanente') {
             durationDays = 'permanent';
-          } else if (!isNaN(parseInt(durationArg)) && parseInt(durationArg) > 0) {
+            console.log('♾️ Aluguel permanente detectado');
+        } else if (!isNaN(parseInt(durationArg)) && parseInt(durationArg) > 0) {
             durationDays = parseInt(durationArg);
-          } else {
+            console.log('📅 Aluguel por dias:', durationDays);
+        } else {
+            console.log('❌ Duração inválida:', durationArg);
             return reply(`🤔 Duração inválida. Use um número de dias (ex: 30) ou a palavra "permanente".\nExemplo: ${prefix}addaluguel 30`);
-          }
-          const result = setGroupRental(from, durationDays);
-          await reply(result.message);
-        } catch (e) {
-          console.error("Erro no comando addaluguel:", e);
-          await reply("❌ Ocorreu um erro inesperado ao adicionar o aluguel.");
         }
-        break;
+
+        console.log('📤 Enviando para setGroupRental...');
+        const result = setGroupRental(from, durationDays);
+
+        console.log('✅ Resultado do setGroupRental:', result);
+
+        await reply(result.message);
+        console.log('📩 Resposta enviada ao usuário');
+
+    } catch (e) {
+        console.error("💥 Erro no comando addaluguel:", e);
+        await reply("❌ Ocorreu um erro inesperado ao adicionar o aluguel.");
+    }
+
+    console.log('🏁 Fim do comando addaluguel');
+    break;
 
       case 'listaraluguel':
       case 'veralugueis':
