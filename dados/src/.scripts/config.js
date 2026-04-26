@@ -255,7 +255,7 @@ async function main() {
         github_ofc: 'https://github.com/DevTokyoVx/nazuna',
         autor: 'DevTokyoVx',
         repositorio: 'nazuna',
-        modoaluguel: off,
+        modoaluguel: 'off',
 
         WA_WEB_VERSION: {
             aviso: 'Não mexa aqui, pode afetar o funcionamento do BOT.',

@@ -1,0 +1,20 @@
+node_modules/
+package-lock.json
+
+# Bot Database / Temp files
+dados/database/*.json
+dados/database/**/*.json
+!dados/database/#boasorte.json
+dados/database/tmp/
+dados/database/qr-code/
+temp/
+cache/
+dados/backup/
+
+# Configurations
+dados/src/config.json
+
+# Logs
+dados/logs/*.log
+dados/logs/
+logs/
