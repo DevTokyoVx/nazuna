@@ -309,3 +309,35 @@ E para quem acompanha essa nova fase: **muito obrigado** por continuar apoiando 
 <p align="center">
   <sub>Projeto original por <a href="https://github.com/hiudyy">Hiudy</a> • Atualmente mantido por Tokyo</sub>
 </p>
+
+---
+
+## 📜 Termos de Uso
+
+> Ao utilizar a Nazuna Bot, você concorda com os termos descritos abaixo.
+
+<details>
+  <summary><strong>📌 Clique aqui para ler os Termos de Uso completos</strong></summary>
+
+<br>
+
+### 🔓 Uso Open Source
+A Nazuna Bot é um projeto **open source** e deve permanecer assim. O arquivo original **não pode ser comercializado**. Se você utilizou a Nazuna como base e realizou **diversas modificações**, criando essencialmente um bot diferente, aí sim você pode comercializar a sua versão.
+
+### 🏠 Hospedagens Autorizadas
+Nenhuma hospedagem, além da **[Vex Hostinger](https://nodzhostinger.com.br)**, tem permissão para disponibilizar a Nazuna Bot em uma aba de bots prontos. Não daremos suporte a bots comercializados dessa forma, pois isso vai contra os termos do projeto.
+
+> ✅ Fazer o **upload manual** da Nazuna em qualquer hospedagem para uso pessoal é **permitido**.
+
+### 🔄 Atualizações Oficiais
+Você **não pode** sair atualizando o bot e divulgando as atualizações na nossa comunidade ou em qualquer outra. Você pode abrir **Pull Requests** e dar sugestões livremente — mas somente o **DevTokyo** pode disponibilizar atualizações oficiais para todos.
+
+### ⚠️ Isenção de Responsabilidade
+Não nos responsabilizamos caso seu número seja **banido do WhatsApp**. O WhatsApp está em constante atualização e proíbe cada vez mais o uso de bots em sua plataforma. Use com consciência e por sua conta e risco.
+
+<br>
+<p align="center">
+  <sub>Estes termos podem ser atualizados a qualquer momento pelo mantenedor do projeto.</sub>
+</p>
+
+</details>
