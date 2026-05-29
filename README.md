@@ -367,7 +367,6 @@ Confira abaixo todos os comandos que dependem da Vex API:
 | 🅱️ `logos 2 textos` | Gera logos estilizadas com dois textos |
 | 📃 `transcrever` | Converte áudios para texto |
 | 📑 `autotranscrever` | Detecta áudios no grupo e transforma rapidamente em textos |
-| 🖼️ `removebg` | Remoção do fundo de imagens rapidamente |
 </div>
 
 > Acesse [vexapi.com.br/plans](https://vexapi.com.br/plans) e escolha o plano ideal para o seu uso.
