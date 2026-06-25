@@ -91,5 +91,43 @@ async function gerarLogo({ query, type }) {
     return { ok: false, msg: `❌ Erro ao gerar o logo: ${err.message}` };
   }
 }
+async function gerarLogo2({ query, query2, type }) {
+  const checkAPI = await verificarAPI();
+  if (checkAPI !== true) return { ok: false, msg: checkAPI };
 
-export { gerarLogo };
+  try {
+    if (!query || !query2 || !type) {
+      return { ok: false, msg: '❌ Parâmetros obrigatórios não informados.' };
+    }
+
+    const cacheKey = `logo:${type}:${query}:${query2}`;
+    const cached = getCached(cacheKey);
+    if (cached) return { ok: true, ...cached, cached: true };
+
+    const { apikey_vex, site_vex } = CONFIG_FILE;
+    const url = `${site_vex}/api/duallogos/${encodeURIComponent(type)}?apikey=${apikey_vex}&query=${encodeURIComponent(query)}&text2=${encodeURIComponent(query2)}`;
+
+    const json = await requestJSON(url);
+
+    const checkAfter = await verificarAPI(json);
+    if (checkAfter !== true) {
+      return { ok: false, msg: checkAfter };
+    }
+
+    const buffer = await requestBuffer(url);
+
+    if (!buffer || buffer.length === 0) {
+      return { ok: false, msg: '❌ Resposta não é uma imagem válida.' };
+    }
+
+    const response = { buffer };
+    setCache(cacheKey, response);
+
+    return { ok: true, ...response };
+
+  } catch (err) {
+    return { ok: false, msg: `❌ Erro ao gerar o logo: ${err.message}` };
+  }
+}
+
+export { gerarLogo, gerarLogo2 };

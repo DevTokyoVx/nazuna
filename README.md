@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/STATUS-ATIVO-success?style=for-the-badge" alt="Status: Ativo" />
   
-  <img src="https://img.shields.io/badge/VERSÃO-v10.0.8-blue?style=for-the-badge" alt="Versão" />
+  <img src="https://img.shields.io/badge/VERSÃO-v10.0.9-blue?style=for-the-badge" alt="Versão" />
   
   <img src="https://img.shields.io/github/stars/DevTokyoVx/nazuna?style=for-the-badge&color=yellow&label=Estrelas" alt="Estrelas" />
   
@@ -56,7 +56,7 @@
 ## 🆕 Novidades da Última Atualização
 
 <p align="center">
-  <img src="https://img.shields.io/badge/VERSÃO-v10.0.8-blue?style=for-the-badge" alt="v10.0.8" />
+  <img src="https://img.shields.io/badge/VERSÃO-v10.0.9-blue?style=for-the-badge" alt="v10.0.9" />
 </p>
 
 <details open>
@@ -64,11 +64,9 @@
 
 <br>
 
-- `removebg`
-- `sfundo`
-- Comando assistente
-- `sistema x9`
-- `zipbot`
+- Correção da criação da JSON global de configurações para o bemvindo
+- Correção da assistente nazuna (não tem mais erro de cache)
+- Comandos que estavam com erros foram removidos e serão adicionados novamente em futuras atualizações
 
 </details>
 
@@ -77,18 +75,18 @@
 
 <br>
 
-- `modo advertência (menuadm)`
-- `dono do bot pode criar uma nova personalidade para a assistente da nazuna (menudono)`
-- `x9 notificando aprovação/rejeição de membros`
-- `setpersonalidade`
-- `roletaban`
-- `enquete`
-- `welcome2` / `legendabv2`
-- `addcmd-subdono play`
-- `removecmd-subdono`
-- `listcmd-subdono`
-- `transcrever`
-- `autotranscrever`
+- `anticategoria` — ativa/desativa todos os antis de uma categoria de uma só vez (ex: `#anticategoria links` ativa todos os antis de links)
+- Repositório agora sobe com a pasta `node_modules` incluída, pois alguns usuários no Termux não conseguem baixar as dependências corretamente
+
+</details>
+
+<details open>
+  <summary><strong>🗑️ Removido</strong></summary>
+
+<br>
+
+- `menuias`
+- Scrapers sem utilidade da última versão feita pelo hiduy
 
 </details>
 
@@ -97,14 +95,9 @@
 
 <br>
 
-- `vab`
-- `eununca`
-- `letra`
+- `menulogos` — agora com logos de 2 textos usando a Vex API
 
 </details>
-
----
-
 ## 📢 Continuidade do Projeto
 
 Este projeto foi **oficialmente descontinuado pelo criador original (hiudy)**.

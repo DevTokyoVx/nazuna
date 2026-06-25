@@ -54,13 +54,7 @@ ${menuTopBorder}${separatorIcon} *${Logos2txtTitle}*
 ${middleBorder}
 ${middleBorder}${menuItemIcon}${prefix}pornhub
 ${middleBorder}${menuItemIcon}${prefix}avengers
-${middleBorder}${menuItemIcon}${prefix}graffiti
-${middleBorder}${menuItemIcon}${prefix}captainamerica
-${middleBorder}${menuItemIcon}${prefix}stone3d
-${middleBorder}${menuItemIcon}${prefix}neon2
-${middleBorder}${menuItemIcon}${prefix}thor
-${middleBorder}${menuItemIcon}${prefix}amongus
+${middleBorder}${menuItemIcon}${prefix}marvel
 ${middleBorder}${menuItemIcon}${prefix}deadpool
-${middleBorder}${menuItemIcon}${prefix}blackpink
 ${bottomBorder}`;
 }

@@ -7,7 +7,7 @@ export default async function menudown(prefix, botName = "MeuBot", userName = "U
     separatorIcon = "❁",
     middleBorder = "┊",
     searchMenuTitle = "🔍 PESQUISAS & CONSULTAS",
-    audioMenuTitle = "🎵 MÚSICA & ÁUDIO", 
+    audioMenuTitle = "🎵 MÚSICA & ÁUDIO",
     videoMenuTitle = "🎬 VÍDEOS & STREAMING",
     downloadMenuTitle = "📥 DOWNLOADS",
     mediaMenuTitle = "📱 MÍDIAS SOCIAIS",
@@ -15,22 +15,11 @@ export default async function menudown(prefix, botName = "MeuBot", userName = "U
 } = {}) {
     const formattedHeader = header.replace(/#user#/g, userName);
     return `${formattedHeader}
-
-${menuTopBorder}${separatorIcon} *${searchMenuTitle}*
-${middleBorder}
-${middleBorder}${menuItemIcon}${prefix}google
-${middleBorder}${menuItemIcon}${prefix}noticias
-${middleBorder}${menuItemIcon}${prefix}apps
-${middleBorder}${menuItemIcon}${prefix}dicionario
-${middleBorder}${menuItemIcon}${prefix}wikipedia
-${bottomBorder}
-
 ${menuTopBorder}${separatorIcon} *${audioMenuTitle}*
 ${middleBorder}
 ${middleBorder}${menuItemIcon}${prefix}letra
 ${middleBorder}${menuItemIcon}${prefix}play
 ${middleBorder}${menuItemIcon}${prefix}play2
-
 ${middleBorder}${menuItemIcon}${prefix}spotify
 ${middleBorder}${menuItemIcon}${prefix}soundcloud
 ${bottomBorder}
@@ -55,11 +44,6 @@ ${bottomBorder}
 ${menuTopBorder}${separatorIcon} *${mediaMenuTitle}*
 ${middleBorder}
 ${middleBorder}${menuItemIcon}${prefix}pinterest
-${bottomBorder}
-
-${menuTopBorder}${separatorIcon} *${gamesMenuTitle}*
-${middleBorder}
-${middleBorder}${menuItemIcon}${prefix}mcplugin
 ${bottomBorder}
 `;
 }

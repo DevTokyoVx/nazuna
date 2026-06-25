@@ -72,7 +72,6 @@ ${bottomBorder}
 
 ${menuTopBorder}${separatorIcon} *${languageMenuTitle}*
 ${middleBorder}
-${middleBorder}${menuItemIcon}${prefix}dicionario
 ${middleBorder}${menuItemIcon}${prefix}tradutor
 ${bottomBorder}
 

@@ -47,7 +47,7 @@ async function loadModules() {
             pinterestMod,
             igdlMod,
             lyricsMod,
-            mcpluginsMod,
+
             spotifyMod,
             soundcloudMod,
             facebookMod,
@@ -62,7 +62,7 @@ async function loadModules() {
             import('./downloads/pinterest.js'),
             import('./downloads/igdl.js'),
             import('./downloads/lyrics.js'),
-            import('./downloads/mcplugins.js'),
+
             import('./downloads/spotify.js'),
             import('./downloads/soundcloud.js'),
             import('./downloads/facebook.js'),
@@ -80,18 +80,18 @@ async function loadModules() {
         }
 
         modules.tiktok = tiktokMod.default ?? tiktokMod;
-        
-               if (modules.tiktok && typeof modules.tiktok.dl !== 'function') {
+
+        if (modules.tiktok && typeof modules.tiktok.dl !== 'function') {
             console.warn('[EXPORTS] TikTok dl function not found');
         }
 
 
         modules.totext = totextMod.default ?? totextMod;
-        
-               if (modules.totext && typeof modules.totext.totext !== 'function') {
+
+        if (modules.totext && typeof modules.totext.totext !== 'function') {
             console.warn('[EXPORTS] totext function not found');
         }
-        
+
         modules.pinterest = pinterestMod.default ?? pinterestMod;
         if (modules.pinterest && typeof modules.pinterest.dl !== 'function') {
             console.warn('[EXPORTS] Pinterest dl function not found');
@@ -99,7 +99,6 @@ async function loadModules() {
 
         modules.igdl = igdlMod.default ?? igdlMod;
         modules.Lyrics = lyricsMod.default ?? lyricsMod;
-        modules.mcPlugin = mcpluginsMod.default ?? mcpluginsMod;
         modules.spotify = spotifyMod.default ?? spotifyMod;
         modules.soundcloud = soundcloudMod.default ?? soundcloudMod;
         modules.facebook = facebookMod.default ?? facebookMod;
@@ -130,8 +129,6 @@ async function loadModules() {
         // --- utils (ESM via dynamic import) ---
         const [
             styleTextMod,
-            LogosMod,
-            LogosMod2,
             verifyUpdateMod,
             emojiMixMod,
             uploadMod,
@@ -154,13 +151,11 @@ async function loadModules() {
             gdriveMod,
             mediafireMod,
             twitterMod,
-            searchMod,
+
             imagetoolsMod,
             freefireMod,
         ] = await Promise.all([
             import('./utils/gerarnick.js'),
-            import('./utils/logotipos.js'),
-            import('./utils/logotipos2.js'),
             import('./utils/update-verify.js'),
             import('./utils/emojimix.js'),
             import('./utils/upload.js'),
@@ -183,15 +178,13 @@ async function loadModules() {
             import('./utils/gdrive.js'),
             import('./utils/mediafire.js'),
             import('./utils/twitter.js'),
-            import('./utils/search.js'),
+
             import('./utils/imagetools.js'),
             import('./utils/freefire.js'),
         ]);
 
         // Utils modules with null checking
         modules.styleText = styleTextMod.default ?? styleTextMod;
-        modules.Logos = LogosMod.default ?? LogosMod;
-        modules.Logos2 = LogosMod2.default ?? LogosMod2;
         modules.VerifyUpdate = verifyUpdateMod.default ?? verifyUpdateMod;
         modules.emojiMix = emojiMixMod.default ?? emojiMixMod;
         modules.upload = uploadMod.default ?? uploadMod;
@@ -217,7 +210,6 @@ async function loadModules() {
         modules.gdrive = gdriveMod.default ?? gdriveMod;
         modules.mediafire = mediafireMod.default ?? mediafireMod;
         modules.twitter = twitterMod.default ?? twitterMod;
-        modules.search = searchMod.default ?? searchMod;
         modules.imagetools = imagetoolsMod.default ?? imagetoolsMod;
         modules.freefire = freefireMod.default ?? freefireMod;
 

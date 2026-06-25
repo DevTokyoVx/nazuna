@@ -156,7 +156,6 @@ import * as vipCommandsManager from './utils/vipCommandsManager.js';
 import { getInfo as gdriveGetInfo } from './funcs/utils/gdrive.js';
 import { getInfo as mediafireGetInfo } from './funcs/utils/mediafire.js';
 import { getInfo as twitterGetInfo } from './funcs/utils/twitter.js';
-import { search, searchNews } from './funcs/utils/search.js';
 import { removeBg, upscale } from './funcs/utils/imagetools.js';
 import spotifyModule from './funcs/downloads/spotify.js';
 import captchaIndex, { initCaptchaIndex, addCaptcha, removeCaptcha, getCaptcha, hasPendingCaptcha } from './utils/captchaIndex.js';
@@ -548,7 +547,6 @@ const {
   Logos2,
   emojiMix,
   upload,
-  mcPlugin,
   tictactoe,
   toolsJson,
   vabJson,
@@ -15616,18 +15614,7 @@ Seja específico e recomende opções variadas (populares e menos conhecidas). F
         break;
       }
 
-      case 'cog':
-        if (!q) return reply(`📢 Ei, falta a pergunta! Me diga o que quer saber após o comando ${prefix}cog! 😴`);
 
-        reply('⏳ Um momentinho, estou pensando na melhor resposta... 🌟').then(() => {
-          ia.makeCognimaRequest('cognima/CognimAI', q, null).then((response) => {
-            reply(formatAIResponse(response.data.choices[0].message.content));
-          }).catch((e) => {
-            console.error('Erro na API CognimAI:', e);
-            reply('😓 Vixe, algo deu errado por aqui! Tente novamente em breve, combinado? 🌈');
-          });
-        });
-        break;
       case 'tradutor':
       case 'translator':
         if (!q) return reply(`🌍 Quer traduzir algo? Me diga o idioma e o texto assim: ${prefix}${command} idioma | texto
@@ -15665,128 +15652,7 @@ Exemplo: ${prefix}tradutor espanhol | Olá mundo! ✨`);
           reply("❌ Erro ao gerar QR Code. Tente novamente mais tarde.");
         });
         break;
-      case 'wikipedia':
-        if (!q) return reply(`📚 O que você quer pesquisar na Wikipédia? Me diga o termo após o comando ${prefix}wikipedia! 😊`);
-        reply("📚 Consultando a Wikipédia... Só um instante! ⏳");
-        try {
-          let found = false;
-          try {
-            const respPT = await axios.get(`https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`);
-            if (respPT.data && respPT.data.extract) {
-              const {
-                title,
-                extract,
-                content_urls,
-                thumbnail
-              } = respPT.data;
-              const link = content_urls?.desktop?.page || '';
-              const thumbUrl = thumbnail?.source || '';
-              let mensagem = `📖✨ *Encontrei isso na Wikipédia (PT):*\n\n*${title || q}*\n\n${extract}\n\n`;
-              if (link) {
 
-                mensagem += `🔗 *Saiba mais:* ${link}\n`;
-              }
-              if (thumbUrl) {
-                await nazu.sendMessage(from, {
-                  image: {
-                    url: thumbUrl
-                  },
-                  caption: mensagem
-                }, {
-                  quoted: info
-                });
-              } else {
-                await reply(mensagem);
-              }
-
-              found = true;
-            }
-          } catch (err) {
-            console.log("Busca PT falhou, tentando EN...");
-          }
-          if (!found) {
-            try {
-              const respEN = await axios.get(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`);
-              if (respEN.data && respEN.data.extract) {
-                const {
-                  title,
-                  extract,
-                  content_urls,
-                  thumbnail
-                } = respEN.data;
-                const link = content_urls?.desktop?.page || '';
-                const thumbUrl = thumbnail?.source || '';
-                let mensagem = `📖✨ *Encontrei isso na Wikipédia (EN):*\n\n*${title || q}*\n\n${extract}\n\n`;
-                if (link) {
-
-                  mensagem += `🔗 *Saiba mais:* ${link}\n`;
-                }
-                if (thumbUrl) {
-                  await nazu.sendMessage(from, {
-                    image: {
-                      url: thumbUrl
-                    },
-                    caption: mensagem
-                  }, {
-                    quoted: info
-                  });
-                } else {
-                  await reply(mensagem);
-                }
-
-                found = true;
-              }
-            } catch (err) {
-              console.log("Busca EN também falhou.");
-            }
-          }
-          if (!found) {
-            await reply("Awnn... 🥺 Não consegui encontrar nada sobre isso na Wikipédia... Tente uma palavra diferente, talvez? 💔");
-          }
-        } catch (e) {
-          console.error("Erro ao buscar na Wikipédia:", e);
-          await reply("📚 Erro ao acessar a Wikipédia no momento. Tente novamente mais tarde.");
-        }
-        break;
-      case 'dicionario':
-      case 'dictionary':
-        if (!q) return reply(`📔 Qual palavra você quer procurar no dicionário? Me diga após o comando ${prefix}${command}! 😊`);
-
-        reply("📔 Procurando no dicionário... Aguarde um pouquinho! ⏳").then(() => {
-          const palavra = q.trim().toLowerCase();
-          axios.get(`https://significado.herokuapp.com/${encodeURIComponent(palavra)}`).then((resp) => {
-            if (resp.data && resp.data.length > 0 && resp.data[0].meanings) {
-              const significados = resp.data[0];
-              let mensagem = `📘✨ *Significado de "${palavra.toUpperCase()}":*\n\n`;
-              if (significados.class) {
-                mensagem += `*Classe:* ${significados.class}\n\n`;
-              }
-              if (significados.meanings && significados.meanings.length > 0) {
-                mensagem += `*Significados:*\n`;
-                significados.meanings.forEach((significado, index) => {
-                  mensagem += `${index + 1}. ${significado}\n`;
-                });
-                mensagem += '\n';
-              }
-              if (significados.etymology) {
-                mensagem += `*Etimologia:* ${significados.etymology}\n\n`;
-              }
-              reply(mensagem);
-            } else {
-              throw new Error('Sem resultados');
-            }
-          }).catch(() => {
-            console.log("API primária do dicionário falhou, tentando IA...");
-            const prompt = `Defina a palavra "${palavra}" em português de forma completa e fofa. Inclua a classe gramatical, os principais significados e um exemplo de uso em uma frase curta e bonitinha.`;
-            ia.makeCognimaRequest('qwen/qwen3-235b-a22b', prompt, null).then((bahz) => {
-              reply(formatAIResponse(bahz.data.choices[0].message.content));
-            }).catch((e) => {
-              console.error("Erro geral ao buscar no dicionário:", e);
-              reply("❌ Palavra não encontrada. Verifique a ortografia e tente novamente.");
-            });
-          });
-        });
-        break;
       case 'updates':
         try {
           if (!isOwner || isOwner && isSubOwner) return reply("🚫 Apenas o Dono principal pode utilizar esse comando!");
@@ -19268,25 +19134,7 @@ ${prefix}addsubbot @152656307871952`
 
       //DOWNLOADS
 
-      case 'mcplugin':
-      case 'mcplugins':
-        if (!q) return reply('Cadê o nome do plugin para eu pesquisar? 🤔');
-        mcPlugin(q).then((datz) => {
-          if (!datz.ok) return reply(datz.msg);
-          return axios.post("https://spoo.me/api/v1/shorten", {
-            long_url: datz.url,
-            alias: `nazuna_${Math.floor(10000 + Math.random() * 90000)}`
-          }).then((shortLinkPlugin) => {
-            return nazu.sendMessage(from, {
-              image: { url: datz.image },
-              caption: `🔍 Encontrei esse plugin aqui:\n\n*Nome*: _${datz.name}_\n*Publicado por*: _${datz.creator}_\n*Descrição*: _${datz.desc}_\n*Link para download*: _${shortLinkPlugin.data.short_url}_\n\n> 💖 `
-            }, { quoted: info });
-          });
-        }).catch((e) => {
-          console.error(e);
-          reply("❌ Ocorreu um erro interno. Tente novamente em alguns minutos.");
-        });
-        break;
+
       case 'play':
       case 'ytmp3':
         try {
@@ -19543,74 +19391,145 @@ ${prefix}addsubbot @152656307871952`
         }
         break;
 
+
+
+
       case 'play2':
-      case 'playspotify':
+
         try {
           if (!q) {
-            return reply(`╭━━━⊱ 🎵 *SPOTIFY PLAY* 🎵 ⊱━━━╮
+            return reply(`╭━━━⊱ 🎵 *YOUTUBE MP3* 🎵 ⊱━━━╮
 │
-│ 📝 Digite o nome da música ou artista
+│ 📝 Digite o nome da música ou
+│     um link do YouTube
 │
 │  *Exemplos:*
-│  ${prefix + command} Te vi de canto
-│  ${prefix + command} Rô Rosa
+│  ${prefix + command} Back to Black
+│  ${prefix + command} https://youtube.com/...
 │
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━╯`);
           }
 
-          await reply('🔎 Buscando no Spotify... Aguarde!');
+          let videoUrl;
+          let videoInfo;
 
-          // 1. Buscar a música
-          const searchResult = await spotifyModule.search(q);
+          if (q.includes('youtube.com') || q.includes('youtu.be')) {
+            videoUrl = q;
+            await reply('Aguarde um momentinho... ☀️');
 
-          if (!searchResult.ok || !searchResult.results?.length) {
-            return reply('❌ Nenhuma música encontrada com esse nome.');
+            youtube.mp3(videoUrl, 128)
+              .then(async (dlRes) => {
+                if (!dlRes.ok)
+                  return nazu.sendMessage(from, { text: `❌ Erro ao baixar o áudio: ${dlRes.msg}` }, { quoted: info });
+
+                try {
+                  await nazu.sendMessage(from, {
+                    audio: dlRes.buffer,
+                    mimetype: 'audio/mpeg'
+                  }, { quoted: info });
+                } catch (audioError) {
+                  if (String(audioError).includes("ENOSPC") || String(audioError).includes("size")) {
+                    await nazu.sendMessage(from, { text: '📦 Arquivo muito grande para enviar como áudio, enviando como documento...' }, { quoted: info });
+                    await nazu.sendMessage(from, {
+                      document: dlRes.buffer,
+                      fileName: `${dlRes.filename}`,
+                      mimetype: 'audio/mpeg'
+                    }, { quoted: info });
+                  } else {
+                    console.error('Erro ao enviar áudio (link direto):', audioError);
+                    nazu.sendMessage(from, { text: '❌ Ocorreu um erro ao enviar o áudio.' }, { quoted: info });
+                  }
+                }
+              })
+              .catch((downloadError) => {
+                console.error('Erro no download (link direto):', downloadError);
+                if (String(downloadError).includes("age")) {
+                  nazu.sendMessage(from, { text: `🔞 Este conteúdo possui restrição de idade e não pode ser baixado.` }, { quoted: info });
+                } else {
+                  nazu.sendMessage(from, { text: `❌ Ocorreu um erro ao baixar o áudio: ${downloadError.message}` }, { quoted: info });
+                }
+              });
+
+            return;
           }
 
-          const track = searchResult.results[0];
-
-          const searchCaption = `🎵 *Música Encontrada!* 🎵\n\n` +
-            `🔍 *Busca:* ${q}\n\n` +
-            `📌 *Título:* ${track.name}\n` +
-            `🔗 *Link:* ${track.song_link}\n` +
-            `⏳ *Duração:* ${track.duration}\n\n` +
-            `📥 *Baixando...*`;
-
-          await reply(searchCaption);
-
-          // 2. Baixar a música
-          const downloadResult = await spotifyModule.download(track.song_link);
-
-          if (!downloadResult.ok) {
-            return reply(`❌ ${downloadResult.msg}`);
+          if (!youtube || typeof youtube.search !== 'function') {
+            console.warn('[YOUTUBE] search function not available');
+            return reply(`❌ Sistema de busca do YouTube não está disponível no momento.`);
           }
 
-          try {
-            await nazu.sendMessage(from, {
-              audio: downloadResult.buffer,
-              mimetype: 'audio/mpeg',
-              fileName: downloadResult.filename
-            }, { quoted: info });
-          } catch (audioError) {
-            if (String(audioError).includes("ENOSPC") || String(audioError).includes("size")) {
-              await reply('📦 Arquivo muito grande, enviando como documento...');
-              await nazu.sendMessage(from, {
-                document: downloadResult.buffer,
-                fileName: downloadResult.filename,
-                mimetype: 'audio/mpeg'
-              }, { quoted: info });
-            } else {
-              console.error('Erro ao enviar áudio do Spotify:', audioError);
-              reply('❌ Ocorreu um erro ao enviar o áudio.');
-            }
-          }
+          // Mensagem de pesquisa
+          await reply(`🔍 *Pesquisando no YouTube...*\n\n🎵 Música: *${q}*\n\n⏳ Aguarde um momento...`);
+
+          // Usando .then em vez de await para a pesquisa do YouTube
+          youtube.search(q)
+            .then((result) => {
+              if (!result.ok) return reply(`${result.msg}`);
+              videoInfo = result;
+              videoUrl = result.data.url;
+
+              if (videoInfo.data.seconds > 1800) return reply(`⚠️ Este vídeo é muito longo (${videoInfo.data.timestamp}).\nPor favor, escolha um vídeo com menos de 30 minutos.`);
+
+              const views = typeof videoInfo.data.views === 'number'
+                ? videoInfo.data.views.toLocaleString('pt-BR')
+                : videoInfo.data.views;
+
+              const description = videoInfo.data.description
+                ? videoInfo.data.description.slice(0, 100) + (videoInfo.data.description.length > 100 ? '...' : '')
+                : 'Sem descrição disponível';
+
+
+              youtube.mp3(videoUrl, 128)
+                .then(async (dlRes) => {
+                  if (!dlRes.ok) return nazu.sendMessage(from, { text: `❌ Erro ao baixar o áudio: ${dlRes.msg}` }, { quoted: info });
+
+                  try {
+                    await nazu.sendMessage(from, {
+                      audio: dlRes.buffer,
+                      mimetype: 'audio/mpeg'
+                    }, { quoted: info });
+                  } catch (audioError) {
+                    if (String(audioError).includes("ENOSPC") || String(audioError).includes("size")) {
+                      await nazu.sendMessage(from, { text: '📦 Arquivo muito grande para enviar como áudio, enviando como documento...' }, { quoted: info });
+                      await nazu.sendMessage(from, {
+                        document: dlRes.buffer,
+                        fileName: `${dlRes.filename}`,
+                        mimetype: 'audio/mpeg'
+                      }, { quoted: info });
+                    } else {
+                      console.error('Erro ao enviar áudio (busca):', audioError);
+                      nazu.sendMessage(from, { text: '❌ Ocorreu um erro ao enviar o áudio.' }, { quoted: info });
+                    }
+                  }
+                })
+                .catch((downloadError) => {
+                  console.error('Erro no download (busca):', downloadError);
+                  if (downloadError.message?.includes('API key inválida')) {
+                    nazu.sendMessage(from, { text: '🤖 *Sistema de YouTube temporariamente indisponível*' }, { quoted: info });
+                  } else if (String(downloadError).includes("age")) {
+                    nazu.sendMessage(from, { text: `🔞 Este conteúdo possui restrição de idade e não pode ser baixado.` }, { quoted: info });
+                  } else {
+                    nazu.sendMessage(from, { text: `❌ Ocorreu um erro ao baixar o áudio: ${downloadError.message}` }, { quoted: info });
+                  }
+                });
+            })
+            .catch((error) => {
+              console.error('Erro ao buscar vídeo no YouTube:', error);
+              return reply(`❌ Erro ao buscar vídeo: ${error.message}`);
+            });
+
+          // Retornar após iniciar a pesquisa em modo promisse para não continuar executando o bloco
+          return;
 
         } catch (error) {
-          console.error('Erro no comando play2:', error);
-          reply("❌ Ocorreu um erro ao processar sua solicitação.");
+          console.error('Erro no comando play/ytmp3 (bloco principal):', error);
+
+          if (String(error).includes("age"))
+            return reply(`🔞 Este conteúdo possui restrição de idade e não pode ser processado.`);
+
+          reply("❌ Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.");
         }
         break;
-
       case 'soundclouddl':
       case 'soundcloud':
         try {
@@ -20370,69 +20289,7 @@ ${prefix}addsubbot @152656307871952`
           reply('❌ Ocorreu um erro ao baixar o tweet. Verifique se o link está correto e tente novamente.');
         }
         break;
-      case 'google':
-      case 'pesquisar':
-      case 'buscar':
-      case 'search':
-        try {
-          if (!q) return reply(`🔍 *Pesquisa Web*\n\n❌ Digite o que deseja pesquisar.\n\n📝 *Uso:* ${prefix}${command} <termo>\n\n📌 *Exemplo:*\n${prefix}${command} inteligência artificial`);
 
-          await reply('🔍 Pesquisando...');
-
-          // Usar implementação local de search
-          const searchResult = await search(q, 10);
-
-          if (!searchResult.ok) {
-            return reply('❌ Nenhum resultado encontrado.');
-          }
-
-          const { query, results } = searchResult;
-
-          let response = `🔍 *Resultados para:* "${query}"\n\n`;
-
-          results.slice(0, 8).forEach((result, index) => {
-            response += `*${index + 1}. ${result.title}*\n`;
-            response += `📝 ${result.description?.substring(0, 150) || 'Sem descrição'}${result.description?.length > 150 ? '...' : ''}\n`;
-            response += `🔗 ${result.url}\n\n`;
-          });
-
-          reply(response.trim());
-        } catch (e) {
-          console.error('Erro no comando google:', e);
-          reply('❌ Ocorreu um erro na pesquisa. Tente novamente.');
-        }
-        break;
-      case 'noticias':
-      case 'news':
-      case 'noticia':
-        try {
-          if (!q) return reply(`📰 *Pesquisa de Notícias*\n\n❌ Digite o que deseja pesquisar.\n\n📝 *Uso:* ${prefix}${command} <termo>\n\n📌 *Exemplo:*\n${prefix}${command} tecnologia brasil`);
-
-          await reply('📰 Buscando notícias...');
-
-          // Usar implementação local de searchNews
-          const newsResult = await searchNews(q, 10);
-
-          if (!newsResult.ok) {
-            return reply('❌ Nenhuma notícia encontrada.');
-          }
-
-          const { query: newsQuery, results: newsResults } = newsResult;
-
-          let newsText = `📰 *Notícias sobre:* "${newsQuery}"\n\n`;
-
-          newsResults.slice(0, 8).forEach((news, index) => {
-            newsText += `*${index + 1}. ${news.title}*\n`;
-            newsText += `📝 ${news.description?.substring(0, 120) || 'Sem descrição'}${news.description?.length > 120 ? '...' : ''}\n`;
-            newsText += `🔗 ${news.url}\n\n`;
-          });
-
-          reply(newsText.trim());
-        } catch (e) {
-          console.error('Erro no comando noticias:', e);
-          reply('❌ Ocorreu um erro na pesquisa. Tente novamente.');
-        }
-        break;
 
 
 
@@ -24022,45 +23879,46 @@ ${prefix}togglecmdvip premium_ia off`);
         break;
       case 'pornhub':
       case 'avengers':
-      case 'graffiti':
-      case 'captainamerica':
-      case 'stone3d':
-      case 'neon2':
-      case 'thor':
-      case 'amongus':
       case 'deadpool':
-      case 'blackpink':
+      case 'avengers':
+      case 'marvel':
+
         try {
           const [texto1, texto2] = q.split('/').map(i => i.trim());
-          if (!texto1 || !texto2) return reply(`❌ Cadê os textos?\nExemplo: ${prefix + command} Nazuna/Bot`);
-
-          const modelo = command; // O próprio comando é o modelo
-
-          await reply(`⏳ Gerando logotipo *${modelo.charAt(0).toUpperCase() + modelo.slice(1)}*... aguarde!`);
-
-          const logoGenerator = new Logos2(texto1, texto2, modelo);
-          const resultado = await logoGenerator.gerarLogotipo();
-
-          if (resultado.success) {
-            // Formatar nome do modelo para exibição
-            const nomeModelo = modelo === 'deadpool' ? 'deadpool' :
-              modelo.charAt(0).toUpperCase() + modelo.slice(1);
-
-            await nazu.sendMessage(from, {
-              image: { url: resultado.imageUrl },
-              caption: `✅ *Logotipo ${nomeModelo} gerado com sucesso!*`
-            }, { quoted: info });
-          } else {
-            await reply(`❌ Erro ao gerar logotipo: ${resultado.error}`);
+          if (!texto1 || !texto2) {
+            return reply(`❌ Cadê os textos?\nExemplo: ${prefix + command} Nazuna/Bot`);
           }
+
+          await reply(`⏳ Gerando logotipo... aguarde! ☀️`);
+
+          const resultado = await logos.gerarLogo2({
+            query: texto1,
+            query2: texto2,
+            type: command
+          });
+
+          if (!resultado || typeof resultado === 'string') {
+            return reply(resultado || '❌ Erro desconhecido');
+          }
+
+          if (!resultado.ok) {
+            return reply(`${resultado.msg}`);
+          }
+
+          if (!resultado.buffer) {
+            return reply('❌ Não foi possível gerar o logotipo');
+          }
+
+          await nazu.sendMessage(from, {
+            image: resultado.buffer,
+            caption: `✅ Logotipo gerado com sucesso!`
+          }, { quoted: info });
 
         } catch (e) {
           console.error(`Erro no comando ${command}:`, e);
           await reply("❌ Ocorreu um erro interno. Tente novamente em alguns minutos.");
         }
         break;
-
-
       //comandos de edits
 
 
@@ -29249,7 +29107,7 @@ Exemplos:
             groupData.antilinkhard = true;
             groupData.antilinksoft = false;
             activated = ['Anti-Link Grupo 🔗', 'Anti-Link Canal 📢', 'Anti-Link Hard ⚠️'];
-          } 
+          }
           else if (cat === '2' || cat === 'midia' || cat === 'conteudo') {
             groupData.antiporn = true;
             groupData.antifig = groupData.antifig || {};
@@ -29260,7 +29118,7 @@ Exemplos:
             groupData.antidoc = true;
             groupData.antiloc = true;
             activated = ['Anti-Pornografia 🔞', 'Anti-Figurinhas 🖼️', 'Anti-Sticker Plus 👾', 'Anti-Documentos 📄', 'Anti-Localização 🗺️'];
-          } 
+          }
           else if (cat === '3' || cat === 'seguranca' || cat === 'antitrava') {
             groupData.antibtn = true;
             groupData.antistatus = true;
@@ -29297,7 +29155,7 @@ Exemplos:
 
           await reply(`✅ *Categoria ativada com sucesso!*\n\n` +
             `📂 *Recursos ativados:*\n` +
-            activated.map(a => `• ${a}`).join('\n') + 
+            activated.map(a => `• ${a}`).join('\n') +
             `\n\n🛡️ O grupo agora está protegido.`);
         } catch (e) {
           console.error(e);
