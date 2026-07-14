@@ -25245,98 +25245,148 @@ case 'togif':
 ╰━━━━━━━━━━━━━━━━━━━━━━╯`);
 
 {
-    const togifTempDir = path.join(__dirname, '../midias/temp_togif_' + Date.now());
+    const WebP = require('node-webpmux');
+
+    async function extractWebpFrames(inputWebp, outputDir) {
+        const img = new WebP.Image();
+
+        await img.load(inputWebp);
+
+        if (!img.hasAnim) {
+            throw new Error("WebP não é animado");
+        }
+
+        const frames = [];
+
+        for (let i = 0; i < img.frames.length; i++) {
+            const framePath = path.join(
+                outputDir,
+                `frame_${i + 1}.webp`
+            );
+
+            const frameBuffer = await img.frames[i].getImage();
+
+            fs.writeFileSync(framePath, frameBuffer);
+
+            frames.push(framePath);
+        }
+
+        return frames;
+    }
+
+    const togifTempDir = path.join(
+        __dirname,
+        '../midias/temp_togif_' + Date.now()
+    );
 
     try {
-        fs.mkdirSync(togifTempDir, { recursive: true });
+        fs.mkdirSync(togifTempDir, {
+            recursive: true
+        });
 
         const stickerBuffer = await getFileBuffer(
             info.message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage,
             'image'
         );
 
-        const inputWebp = path.join(togifTempDir, 'input.webp');
-        const outputGif = path.join(togifTempDir, 'output.gif');
-        const outputMp4 = path.join(togifTempDir, 'output.mp4');
-
-        fs.writeFileSync(inputWebp, stickerBuffer);
-
-        const frameDir = path.join(togifTempDir, 'frames');
-        fs.mkdirSync(frameDir);
-
-        let frame = 1;
-        let frames = [];
-
-
-        while (true) {
-            const frameWebp = path.join(
-                frameDir,
-                `frame_${frame}.webp`
-            );
-
-            const framePng = path.join(
-                frameDir,
-                `frame_${frame}.png`
-            );
-
-            try {
-                await execAsync(
-                    `webpmux -get frame ${frame} "${inputWebp}" -o "${frameWebp}"`
-                );
-
-                await execAsync(
-                    `dwebp "${frameWebp}" -o "${framePng}"`
-                );
-
-                frames.push(framePng);
-
-                frame++;
-
-            } catch {
-                break;
-            }
-        }
-
-        if (!frames.length) {
-            throw new Error("Não foi possível extrair frames do WebP");
-        }
-
-
-
-        await execAsync(
-            `convert -delay 6 -loop 0 ${frames.map(f => `"${f}"`).join(" ")} "${outputGif}"`
+        const inputWebp = path.join(
+            togifTempDir,
+            'input.webp'
         );
 
+        const frameDir = path.join(
+            togifTempDir,
+            'frames'
+        );
 
+        const outputGif = path.join(
+            togifTempDir,
+            'output.gif'
+        );
+
+        const outputMp4 = path.join(
+            togifTempDir,
+            'output.mp4'
+        );
+
+        fs.writeFileSync(
+            inputWebp,
+            stickerBuffer
+        );
+
+        fs.mkdirSync(frameDir);
+
+        const webpFrames = await extractWebpFrames(
+            inputWebp,
+            frameDir
+        );
+
+        let pngFrames = [];
+
+        for (let i = 0; i < webpFrames.length; i++) {
+            const pngPath = path.join(
+                frameDir,
+                `frame_${i + 1}.png`
+            );
+
+            await execAsync(
+                `dwebp "${webpFrames[i]}" -o "${pngPath}"`
+            );
+
+            pngFrames.push(pngPath);
+        }
+
+        if (!pngFrames.length) {
+            throw new Error("Nenhum frame convertido");
+        }
+
+        await execAsync(
+            `convert -delay 6 -loop 0 ${pngFrames.map(x => `"${x}"`).join(" ")} "${outputGif}"`
+        );
 
         await execAsync(
             `ffmpeg -i "${outputGif}" -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -y "${outputMp4}"`
         );
 
-
-        await nazu.sendMessage(from, {
-            video: fs.readFileSync(outputMp4),
-            gifPlayback: true,
-            fileName: 'sticker.gif',
-            mimetype: 'video/mp4'
-        }, {
-            quoted: info
-        });
-
+        await nazu.sendMessage(
+            from,
+            {
+                video: fs.readFileSync(outputMp4),
+                gifPlayback: true,
+                fileName: 'sticker.gif',
+                mimetype: 'video/mp4'
+            },
+            {
+                quoted: info
+            }
+        );
 
     } catch (error) {
-        console.error("Erro togif:", error);
-        await reply("❌ Erro ao converter a figurinha animada.");
+        console.error(
+            "Erro togif:",
+            error
+        );
+
+        await reply(
+            "❌ Erro ao converter a figurinha animada."
+        );
+
     } finally {
         try {
-            fs.rmSync(togifTempDir, {
-                recursive: true,
-                force: true
-            });
+            fs.rmSync(
+                togifTempDir,
+                {
+                    recursive: true,
+                    force: true
+                }
+            );
         } catch {}
     }
 }
+
 break;
+
+
       case 'totext':
       case 'transcrever': {
         const quoted =
