@@ -1,0 +1,71 @@
+{
+    "name": "css-select",
+    "version": "7.0.0",
+    "description": "a CSS selector compiler/engine",
+    "author": "Felix Boehm <me@feedic.com>",
+    "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/fb55"
+    },
+    "keywords": [
+        "css",
+        "selector",
+        "sizzle"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/fb55/css-select.git"
+    },
+    "sideEffects": false,
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist",
+        "src",
+        "!**/*.spec.ts"
+    ],
+    "dependencies": {
+        "boolbase": "^2.0.0",
+        "css-what": "^8.0.0",
+        "domhandler": "^6.0.1",
+        "domutils": "^4.0.2",
+        "nth-check": "^3.0.1"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.4.8",
+        "@eslint/compat": "^2.0.3",
+        "@feedic/eslint-config": "^0.3.1",
+        "@types/node": "^25.5.0",
+        "eslint": "^10.1.0",
+        "eslint-config-biome": "^2.1.3",
+        "globals": "^17.4.0",
+        "htmlparser2": "^12.0.0",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.57.1",
+        "vitest": "^4.1.0"
+    },
+    "scripts": {
+        "build": "tsc",
+        "format": "npm run format:es && npm run format:biome",
+        "format:biome": "biome check --write .",
+        "format:es": "npm run lint:es -- --fix",
+        "lint": "npm run lint:es && npm run lint:biome && npm run lint:tsc",
+        "lint:biome": "biome check .",
+        "lint:es": "eslint .",
+        "lint:tsc": "tsc --noEmit",
+        "prepublishOnly": "npm run build",
+        "test": "npm run test:vi && npm run lint",
+        "test:vi": "vitest run"
+    },
+    "license": "BSD-2-Clause",
+    "engines": {
+        "node": ">=20.19.0"
+    }
+}

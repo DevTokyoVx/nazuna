@@ -1,0 +1,63 @@
+/*
+ * Pseudo selectors
+ *
+ * Pseudo selectors are available in three forms:
+ *
+ * 1. Filters are called when the selector is compiled and return a function
+ *  that has to return either false, or the results of `next()`.
+ * 2. Pseudos are called on execution. They have to return a boolean.
+ * 3. Subselects work like filters, but have an embedded selector that will be run separately.
+ *
+ * Filters are great if you want to do some pre-processing, or change the call order
+ * of `next()` and your code.
+ * Pseudos should be used to implement simple checks.
+ */
+import { parse } from "css-what";
+import { aliases } from "./aliases.js";
+import { filters } from "./filters.js";
+import { pseudos, verifyPseudoArguments } from "./pseudos.js";
+import { subselects } from "./subselects.js";
+/**
+ * Compile a pseudo selector into an executable query function.
+ * @param next Matcher to run after this matcher succeeds.
+ * @param selector Selector used to match elements.
+ * @param options Options that control this operation.
+ * @param context Context nodes used to scope selector matching.
+ * @param compileToken Function used to compile nested selector tokens.
+ */
+export function compilePseudoSelector(next, selector, options, context, compileToken) {
+    const { name, data } = selector;
+    if (Array.isArray(data)) {
+        if (!(name in subselects)) {
+            throw new Error(`Unknown pseudo-class :${name}(${data})`);
+        }
+        return subselects[name](next, data, options, context, compileToken);
+    }
+    const userPseudo = options.pseudos?.[name];
+    const stringPseudo = typeof userPseudo === "string" ? userPseudo : aliases[name];
+    if (typeof stringPseudo === "string") {
+        if (data != null) {
+            throw new Error(`Pseudo ${name} doesn't have any arguments`);
+        }
+        // The alias has to be parsed here, to make sure options are respected.
+        const alias = parse(stringPseudo);
+        return subselects["is"](next, alias, options, context, compileToken);
+    }
+    if (typeof userPseudo === "function") {
+        verifyPseudoArguments(userPseudo, name, data, 1);
+        return (element) => userPseudo(element, data) && next(element);
+    }
+    if (name in filters) {
+        return filters[name](next, data, options, context, compileToken);
+    }
+    if (name in pseudos) {
+        const pseudo = pseudos[name];
+        verifyPseudoArguments(pseudo, name, data, 2);
+        return (element) => pseudo(element, options, data) && next(element);
+    }
+    throw new Error(`Unknown pseudo-class :${name}`);
+}
+export { aliases } from "./aliases.js";
+export { filters } from "./filters.js";
+export { pseudos } from "./pseudos.js";
+//# sourceMappingURL=index.js.map

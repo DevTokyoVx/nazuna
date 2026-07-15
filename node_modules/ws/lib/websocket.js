@@ -646,9 +646,9 @@ module.exports = WebSocket;
  *     masking key
  * @param {Number} [options.handshakeTimeout] Timeout in milliseconds for the
  *     handshake request
- * @param {Number} [options.maxBufferedChunks=1048576] The maximum number of
+ * @param {Number} [options.maxBufferedChunks=262144] The maximum number of
  *     buffered data chunks
- * @param {Number} [options.maxFragments=131072] The maximum number of message
+ * @param {Number} [options.maxFragments=16384] The maximum number of message
  *     fragments
  * @param {Number} [options.maxPayload=104857600] The maximum allowed message
  *     size
@@ -670,8 +670,8 @@ function initAsClient(websocket, address, protocols, options) {
     autoPong: true,
     closeTimeout: CLOSE_TIMEOUT,
     protocolVersion: protocolVersions[1],
-    maxBufferedChunks: 1024 * 1024,
-    maxFragments: 128 * 1024,
+    maxBufferedChunks: 256 * 1024,
+    maxFragments: 16 * 1024,
     maxPayload: 100 * 1024 * 1024,
     skipUTF8Validation: false,
     perMessageDeflate: true,
