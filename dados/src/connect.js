@@ -44,7 +44,7 @@ class MessageQueue {
             batchesProcessed: 0,
             avgBatchTime: 0
         };
-        this.idCounter = 0; // Contador simples ao invés de crypto.randomUUID()
+        this.idCounter = 0; 
     }
 
     setErrorHandler(handler) {
@@ -74,7 +74,7 @@ class MessageQueue {
         if (this.isProcessing) return;
 
         this.isProcessing = true;
-        // Usa processo recursivo em vez de setInterval para melhor performance
+
         this.processQueue();
     }
 
@@ -90,9 +90,8 @@ class MessageQueue {
     }
 
     async processQueue() {
-        // Processa mensagens em lotes paralelos
-        while (this.isProcessing && this.queue.length > 0) {
-            // Calcula quantos lotes podemos processar
+                while (this.isProcessing && this.queue.length > 0) {
+
             const availableBatches = Math.min(
                 this.batchSize,
                 Math.ceil(this.queue.length / this.messagesPerBatch)
@@ -100,7 +99,7 @@ class MessageQueue {
 
             if (availableBatches === 0) break;
 
-            // Cria array de lotes
+
             const batches = [];
             for (let i = 0; i < availableBatches && this.queue.length > 0; i++) {
                 const batchItems = [];
@@ -115,7 +114,7 @@ class MessageQueue {
 
             this.stats.currentQueueLength = this.queue.length;
 
-            // Processa todos os lotes em paralelo
+
             const batchStartTime = Date.now();
             await Promise.allSettled(
                 batches.map(batch => this.processBatch(batch))
@@ -134,12 +133,12 @@ class MessageQueue {
     }
 
     async processBatch(batchItems) {
-        // Processa todas as mensagens do lote em paralelo
+
         const batchPromises = batchItems.map(item => this.processItem(item));
 
         const results = await Promise.allSettled(batchPromises);
 
-        // Contabiliza resultados
+
         results.forEach((result, index) => {
             if (result.status === 'fulfilled') {
                 this.stats.totalProcessed++;
@@ -157,13 +156,8 @@ class MessageQueue {
             resolve(result);
             return result;
         } catch (error) {
-             /*
-             CORREÇÃO: handleProcessingError já chama item.reject() internamente.
-             Chamar reject(error) novamente aqui causava double-reject na mesma Promise,
-             gerando UnhandledPromiseRejection que podia derrubar o processo.
-             */
-            await this.handleProcessingError(item, error);
-            // Não relança o erro — o reject já foi feito dentro de handleProcessingError.
+                         await this.handleProcessingError(item, error);
+
         }
     }
 
@@ -180,7 +174,7 @@ class MessageQueue {
             }
         }
 
-        // Chama reject apenas aqui — único ponto de rejeição da Promise.
+
         item.reject(error);
     }
 
@@ -222,7 +216,7 @@ class MessageQueue {
     }
 
     clear() {
-        // Rejeita todas as mensagens pendentes antes de limpar
+
         this.queue.forEach(item => {
             if (item.reject) {
                 item.reject(new Error('Queue cleared'));
@@ -237,7 +231,7 @@ class MessageQueue {
         console.log('🛑 Finalizando MessageQueue...');
         this.stopProcessing();
 
-        // Aguarda workers ativos terminarem (timeout de 10s)
+
         const shutdownTimeout = 10000;
         const startTime = Date.now();
 
@@ -254,11 +248,11 @@ class MessageQueue {
     }
 }
 
-const messageQueue = new MessageQueue(8, 10, 2); // 8 workers, 10 lotes, 2 mensagens por lote
+const messageQueue = new MessageQueue(8, 10, 2); 
 
 const configPath = path.join(__dirname, "config.json");
 let config;
-let DEBUG_MODE = false; // Modo debug para logs detalhados
+let DEBUG_MODE = false; 
 
 
 
@@ -315,13 +309,7 @@ const AUTH_DIR = path.join(__dirname, '..', 'database', 'qr-code');
 const DATABASE_DIR = path.join(__dirname, '..', 'database');
 const GLOBAL_BLACKLIST_PATH = path.join(__dirname, '..', 'database', 'dono', 'globalBlacklist.json');
 
- /*
- CORREÇÃO: Cache em memória para a blacklist global.
- Antes, o arquivo era lido do disco em CADA evento de participante, gerando
- centenas de leituras por minuto em grupos ativos e saturando o disco.
- Agora o cache é revalidado apenas a cada 60 segundos.
- */
-let _globalBlacklistCache = null;
+ let _globalBlacklistCache = null;
 let _globalBlacklistCacheTime = 0;
 const GLOBAL_BLACKLIST_TTL_MS = 60_000;
 
@@ -332,11 +320,9 @@ async function initializeOptimizedCaches(NazunaSock) {
     try {
         await performanceOptimizer.initialize();
 
-        // Inicializa índice de captcha para busca rápida
+
         const requestCaptchaMsg = async (dataCaptcha) => {
-            /*
-                Vai receber apenas os ids expirados
-            */
+
             await NazunaSock.sendMessage(dataCaptcha.groupId, { text: `⚠️ @${dataCaptcha.idOrigin.split('@')[0]} não resolveu o captcha a tempo e foi removido.` });
             await NazunaSock.groupParticipantsUpdate(dataCaptcha.groupId, [dataCaptcha.idOrigin], 'remove').catch(() => { });
         };
@@ -363,7 +349,7 @@ async function initializeOptimizedCaches(NazunaSock) {
 }
 const codeMode = process.argv.includes('--code') || process.env.NAZUNA_CODE_MODE === '1';
 
-// Cleanup otimizado do cache de mensagens
+
 let cacheCleanupInterval = null;
 const setupMessagesCacheCleanup = () => {
     if (cacheCleanupInterval) clearInterval(cacheCleanupInterval);
@@ -371,7 +357,7 @@ const setupMessagesCacheCleanup = () => {
     cacheCleanupInterval = setInterval(() => {
         if (!messagesCache || messagesCache.size <= 3000) return;
 
-        const keysToDelete = Math.floor(messagesCache.size * 0.4); // Remove 40% dos mais antigos
+        const keysToDelete = Math.floor(messagesCache.size * 0.4); 
         const keys = Array.from(messagesCache.keys()).slice(0, keysToDelete);
         keys.forEach(key => messagesCache.delete(key));
 
@@ -379,7 +365,7 @@ const setupMessagesCacheCleanup = () => {
     }, 300000); // A cada 5 minutos
 };
 
-// Inicia cleanup quando o bot conectar
+
 const startCacheCleanup = () => {
     setupMessagesCacheCleanup();
 };
@@ -396,11 +382,11 @@ const ask = (question) => {
 };
 
 async function clearAuthDir(dirToRemove = AUTH_DIR) {
-    // Mantém compatibilidade com múltiplas instâncias (ex: sub-bots) e com versões antigas do Node.
+
     try {
         const normalized = path.resolve(dirToRemove);
 
-        // Guardrails: evita apagar diretórios perigosos.
+
         const rootPath = path.parse(normalized).root;
         if (normalized === rootPath) {
             console.error(`❌ Abortando limpeza: caminho inválido (${normalized})`);
@@ -417,7 +403,7 @@ async function clearAuthDir(dirToRemove = AUTH_DIR) {
         if (typeof fs.rm === 'function') {
             await fs.rm(normalized, { recursive: true, force: true });
         } else if (typeof fs.rmdir === 'function') {
-            // Node antigo: rmdir recursivo
+
             await fs.rmdir(normalized, { recursive: true }).catch(() => { });
         } else {
             throw new Error('API de remoção de diretório não disponível (fs.rm/fs.rmdir)');
@@ -441,8 +427,7 @@ async function loadGroupSettings(groupId) {
 }
 
 async function loadGlobalBlacklist() {
-    // CORREÇÃO: Usa cache em memória com TTL de 60s.
-    // Antes: leitura de disco a cada evento → I/O excessivo em grupos ativos.
+
     const now = Date.now();
     if (_globalBlacklistCache !== null && (now - _globalBlacklistCacheTime) < GLOBAL_BLACKLIST_TTL_MS) {
         return _globalBlacklistCache;
@@ -454,7 +439,7 @@ async function loadGlobalBlacklist() {
         return _globalBlacklistCache;
     } catch (e) {
         console.error(`❌ Erro ao ler blacklist global: ${e.message}`);
-        // Retorna cache antigo se existir, ou objeto vazio
+
         return _globalBlacklistCache ?? {};
     }
 }
@@ -486,7 +471,7 @@ async function createGroupMessage(NazunaSock, groupMetadata, participants, setti
     ? (globalJson.textbv || "╭━━━⊱ 🌟 *BEM-VINDO(A/S)!* 🌟 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🏠 Grupo: *#nomedogp#*\n│ 👥 Membros: *#membros#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n✨ *Seja bem-vindo(a/s) ao grupo!* ✨")
     : (globalJson.exit?.text || "╭━━━⊱ 👋 *ATÉ LOGO!* 👋 ⊱━━━╮\n│\n│ 👤 #numerodele#\n│\n│ 🚪 Saiu do grupo\n│ *#nomedogp#*\n│\n╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n💫 *Até a próxima!* 💫");
 
-  // textbv do grupo tem prioridade absoluta; se não tiver, usa o padrão. Nunca concatena os dois.
+
   const chosenText = settings.textbv || defaultText;
   const text = formatMessageText(chosenText, replacements);
 
@@ -495,7 +480,10 @@ async function createGroupMessage(NazunaSock, groupMetadata, participants, setti
     mentions
   };
 
-  if (settings.photoType === 'api' && isWelcome) {
+  if (settings.photo === false) {
+
+  } else if (settings.photoType === 'api') {
+
     let profilePicUrl = 'https://raw.githubusercontent.com/nazuninha/uploads/main/outros/1747053564257_bzswae.bin';
 
     if (participants.length === 1) {
@@ -507,10 +495,12 @@ async function createGroupMessage(NazunaSock, groupMetadata, participants, setti
       ? participants[0].split('@')[0]
       : `${participants.length} membros`;
 
+    const cardTitle = isWelcome ? 'Bem vindo (a)!' : 'Até logo!';
+
     const result = await canvas.gerarwelcomecard(
       profilePicUrl,
       nome,
-      'Bem vindo (a)!',
+      cardTitle,
       globalJson.welcomecard?.fundo || null,
       globalJson.welcomecard?.corMoldura || null,
       globalJson.welcomecard?.corLinhas || null,
@@ -581,7 +571,7 @@ async function handleGroupParticipantsUpdate(NazunaSock, inf) {
 
 const entradaPorLink = !inf.author || inf.participants.includes(inf.author);
 
-// X9 aprovação de entrada
+
 if (groupSettings?.x9 && inf.author && !entradaPorLink) {
 
     const autor = inf.author.split('@')[0];
@@ -863,7 +853,7 @@ async function handleGroupJoinRequest(NazunaSock, inf) {
         }
 
         const groupSettings = await loadGroupSettings(from);
-        // X9 reprovação de solicitação
+
 if (
     groupSettings?.x9 &&
     (
@@ -941,19 +931,14 @@ const isValidJid = (str) => /^\d+@s\.whatsapp\.net$/.test(str);
 const isValidLid = (str) => /^[a-zA-Z0-9_]+@lid$/.test(str);
 const isValidUserId = (str) => isValidJid(str) || isValidLid(str);
 
-/**
- * Validates if a participant object has a valid ID and extracts the ID
- * @param {object|string} participant - The participant object or string to validate
- * @returns {string|boolean} - The participant ID if valid, false otherwise
- */
 function isValidParticipant(participant) {
-    // If participant is already a string, validate it directly
+
     if (typeof participant === 'string') {
         if (participant.trim().length === 0) return false;
         return participant;
     }
 
-    // If participant is an object with id property
+
     if (participant && typeof participant === 'object' && participant.hasOwnProperty('id')) {
         const id = participant.id;
         if (id === null || id === undefined || id === '') return false;
@@ -1292,21 +1277,18 @@ async function performMigration(NazunaSock) {
 
 }
 
-// Variáveis de controle de reconexão (declaradas aqui para evitar temporal dead zone)
-let reconnectAttempts = 0;
-let isReconnecting = false; // Flag para evitar múltiplas reconexões simultâneas
-let reconnectTimer = null; // Timer de reconexão para poder cancelar
-let forbidden403Attempts = 0; // Contador específico para erro 403
-const MAX_RECONNECT_ATTEMPTS = 10;
-const MAX_403_ATTEMPTS = 3; // Máximo de 3 tentativas para erro 403
-const RECONNECT_DELAY_BASE = 5000; // 5 segundos base
 
-// CORREÇÃO: Timers do evento 'open' agora têm referência para serem cancelados
-// caso o bot desconecte antes deles dispararem, evitando timers órfãos usando socket antigo.
+let reconnectAttempts = 0;
+let isReconnecting = false; 
+let reconnectTimer = null; 
+let forbidden403Attempts = 0; 
+const MAX_RECONNECT_ATTEMPTS = 10;
+const MAX_403_ATTEMPTS = 3; 
+const RECONNECT_DELAY_BASE = 5000; 
+
 let ownerMsgTimer = null;
 let subBotInitTimer = null;
-// fetchLatestBaileysVersion() faz uma requisição HTTP — se a rede estava instável
-// (causa da desconexão), essa chamada podia falhar e impedir a reconexão.
+
 let _cachedWAVersion = null;
 
 async function getWAVersion() {
@@ -1326,7 +1308,7 @@ async function createBotSocket(authDir) {
             signalRepository
         } = await useMultiFileAuthState(authDir, makeCacheableSignalKeyStore);
 
-        // CORREÇÃO: Usa versão cacheada em vez de buscar na rede a cada reconexão.
+
         const version = await getWAVersion();
         console.log(`📱 Usando versão do WhatsApp: ${version.join('.')}`);
 
@@ -1341,12 +1323,7 @@ async function createBotSocket(authDir) {
             retryRequestDelayMs: 5000,
             qrTimeout: 180000,
             keepAliveIntervalMs: 30_000,
-             /*
-             CORREÇÃO: defaultQueryTimeoutMs era undefined (sem timeout), causando acúmulo
-             de Promises pendentes que nunca resolviam, vazando memória ao longo do tempo.
-             60 segundos é suficiente para qualquer query normal do WhatsApp.
-             */
-            defaultQueryTimeoutMs: 60_000,
+                 defaultQueryTimeoutMs: 60_000,
             maxMsgRetryCount: 5,
             shouldIgnoreJid: (jid) =>
                 isJidBroadcast(jid) || isJidStatusBroadcast(jid) || isJidNewsletter(jid),
@@ -1395,26 +1372,26 @@ async function createBotSocket(authDir) {
                 try {
                     const groupId = ev.id;
 
-                    // 🔹 Buscar config do grupo (se você tiver banco/json)
+
                     const groupData = await getGroupData(groupId).catch(() => null);
 
-                    if (!groupData?.x9) return; // X9 desligado
+                    if (!groupData?.x9) return; 
 
                     let mensagem = null;
 
-                    // 📸 FOTO ALTERADA
+
                     if (ev.imgUrl || ev.picUrl) {
                         mensagem = `📸 *X9 Report:* A foto do grupo foi alterada!`;
                         console.log('[DEBUG] Foto alterada detectada');
                     }
 
-                    // 📝 NOME ALTERADO
+
                     else if (ev.subject) {
                         mensagem = `📝 *X9 Report:* Nome do grupo alterado para:\n*${ev.subject}*`;
                         console.log('[DEBUG] Nome alterado:', ev.subject);
                     }
 
-                    // 📜 DESCRIÇÃO ALTERADA
+
                     else if (ev.desc) {
                         mensagem = `📜 *X9 Report:* Descrição do grupo foi alterada!`;
                         console.log('[DEBUG] Descrição alterada');
@@ -1428,7 +1405,7 @@ async function createBotSocket(authDir) {
                         });
                     }
 
-                    // 🔹 Atualiza metadata (opcional)
+
                     if (DEBUG_MODE) {
                         const meta = await NazunaSock.groupMetadata(groupId).catch(() => null);
                         if (meta) {
@@ -1437,7 +1414,7 @@ async function createBotSocket(authDir) {
                     }
 
                 } catch (e) {
-//                    console.error(`❌ Erro no groups.update (${ev.id}): ${e.message}`);
+                   
                 }
             });
 
@@ -1446,7 +1423,6 @@ async function createBotSocket(authDir) {
 
 
 
-        // Listener para solicitações de entrada em grupos (join requests)
         NazunaSock.ev.on('group.join-request', async (inf) => {
             if (DEBUG_MODE) {
                 console.log('\n🐛 ========== GROUP JOIN REQUEST ==========');
@@ -1594,18 +1570,8 @@ async function createBotSocket(authDir) {
                 console.log('📱 Escaneie o QR code acima com o WhatsApp para autenticar o bot.');
             }
             if (connection === 'open') {
-                 /*
-                 CORREÇÃO: Todo o bloco de inicialização envolto em try/catch.
-                 Antes, se qualquer await aqui falhasse (ex: initializeOptimizedCaches,
-                 rentalExpirationManager.initialize), o erro era swallowed silenciosamente
-                 pelo Baileys (async void) e o bot ficava num estado inconsistente sem reconectar.
-                 */
-                try {
-                 /*
-                 CORREÇÃO: Reset dos contadores de tentativa feito aqui, após conexão confirmada.
-                 Antes era feito no início de startNazu() — antes de qualquer sucesso —
-                 fazendo o limite MAX_RECONNECT_ATTEMPTS nunca ser atingido de fato.
-                 */
+                                 try {
+                 
                 reconnectAttempts = 0;
                 forbidden403Attempts = 0;
                 console.log(`🔄 Conexão aberta. Inicializando sistema de otimização...`);
@@ -1614,12 +1580,6 @@ async function createBotSocket(authDir) {
 
                     await updateOwnerLid(NazunaSock);
 
-                     /*
-                     CORREÇÃO: performMigration é adiado para DEPOIS da inicialização completa.
-                     Antes era await direto aqui — o scan do filesystem + chamadas NazunaSock.onWhatsApp()
-                     podiam levar dezenas de segundos, fazendo o keepalive (30s) expirar e
-                     o WhatsApp fechar a conexão por inatividade logo após a abertura.
-                     */
                      setTimeout(() => {
                         performMigration(NazunaSock).catch(err => {
                             console.error('❌ Erro na migração (não-bloqueante):', err.message);
@@ -1630,18 +1590,11 @@ async function createBotSocket(authDir) {
                     await rentalExpirationManager.initialize();
 
                     attachMessagesListener();
-                    startCacheCleanup(); // Inicia o sistema de limpeza de cache
-
-                    // Envia mensagem de boas-vindas para o dono
+                    startCacheCleanup(); 
                     try {
                         const msgBotOnConfig = loadMsgBotOn();
 
                         if (msgBotOnConfig.enabled) {
-                             /*
-                             CORREÇÃO: Timer salvo na variável ownerMsgTimer para poder ser
-                             cancelado se o bot desconectar antes dos 3s (evita timer órfão
-                             usando socket antigo após reconexão).
-                             */
                             if (ownerMsgTimer) clearTimeout(ownerMsgTimer);
                             ownerMsgTimer = setTimeout(async () => {
                                 ownerMsgTimer = null;
@@ -1662,12 +1615,12 @@ async function createBotSocket(authDir) {
                         console.error('❌ Erro ao processar mensagem de inicialização:', msgError.message);
                     }
 
-                    // Inicializa sub-bots automaticamente
+
                     try {
                         const subBotManagerModule = await import('./utils/subBotManager.js');
                         const subBotManager = subBotManagerModule.default ?? subBotManagerModule;
                         console.log('🤖 Verificando sub-bots cadastrados...');
-                        // CORREÇÃO: Timer salvo em subBotInitTimer para cancelamento em reconexão.
+
                         if (subBotInitTimer) clearTimeout(subBotInitTimer);
                         subBotInitTimer = setTimeout(async () => {
                             subBotInitTimer = null;
@@ -1680,8 +1633,7 @@ async function createBotSocket(authDir) {
                     console.log(`✅ Bot ${nomebot} iniciado com sucesso! Prefixo: ${prefixo} | Dono: ${nomedono}`);
                     console.log(`📊 Configuração: ${messageQueue.batchSize} lotes de ${messageQueue.messagesPerBatch} mensagens (${messageQueue.batchSize * messageQueue.messagesPerBatch} msgs paralelas)`);
                 } catch (initErr) {
-                    // CORREÇÃO: Erro crítico na inicialização — loga e dispara reconexão
-                    // em vez de deixar o bot em estado parcialmente inicializado.
+
                     console.error('❌ Erro crítico na inicialização pós-conexão:', initErr.message);
                     setTimeout(() => startNazu(), 5000);
                 }
@@ -1702,18 +1654,18 @@ async function createBotSocket(authDir) {
 
                 console.log(`❌ Conexão fechada. Código: ${reason} | Motivo: ${reasonMessage}`);
 
-                // Limpa recursos antes de reconectar
+
                 if (cacheCleanupInterval) {
                     clearInterval(cacheCleanupInterval);
                     cacheCleanupInterval = null;
                 }
 
-                // CORREÇÃO: Cancela timers órfãos do evento 'open' que ainda não dispararam.
-                // Sem isso, eles usariam o socket antigo após a reconexão.
+
+
                 if (ownerMsgTimer) { clearTimeout(ownerMsgTimer); ownerMsgTimer = null; }
                 if (subBotInitTimer) { clearTimeout(subBotInitTimer); subBotInitTimer = null; }
 
-                // Tratamento especial para erro 403 (Forbidden)
+
                 if (reason === 403) {
                     forbidden403Attempts++;
                     console.log(`⚠️ Erro 403 detectado. Tentativa ${forbidden403Attempts}/${MAX_403_ATTEMPTS}`);
@@ -1725,7 +1677,7 @@ async function createBotSocket(authDir) {
                         process.exit(1);
                     }
 
-                    // Aguarda antes de tentar reconectar
+
                     console.log('🔄 Tentando reconectar em 5 segundos...');
                     if (reconnectTimer) {
                         clearTimeout(reconnectTimer);
@@ -1736,7 +1688,7 @@ async function createBotSocket(authDir) {
                     return;
                 }
 
-                // Reset do contador 403 se for outro tipo de erro
+
                 forbidden403Attempts = 0;
 
                 if (reason === DisconnectReason.badSession || reason === DisconnectReason.loggedOut) {
@@ -1744,32 +1696,32 @@ async function createBotSocket(authDir) {
                     console.log('🔄 Nova autenticação será necessária na próxima inicialização.');
                 }
 
-                // Não reconecta se conexão foi substituída (outra instância assumiu)
+
                 if (reason === DisconnectReason.connectionReplaced) {
                     console.log('⚠️ Conexão substituída por outra instância. Não reconectando para evitar conflito.');
                     return;
                 }
 
-                // Delay antes de reconectar baseado no motivo
+
                 let reconnectDelay = 5000;
                 if (reason === DisconnectReason.timedOut) {
-                    reconnectDelay = 3000; // Reconexão mais rápida para timeout
+                    reconnectDelay = 3000; 
                 } else if (reason === DisconnectReason.connectionLost) {
-                    reconnectDelay = 2000; // Reconexão ainda mais rápida para perda de conexão
+                    reconnectDelay = 2000; 
                 } else if (reason === DisconnectReason.loggedOut || reason === DisconnectReason.badSession) {
-                    reconnectDelay = 10000; // Delay maior para problemas de autenticação
+                    reconnectDelay = 10000; 
                 }
 
                 console.log(`🔄 Aguardando ${reconnectDelay / 1000} segundos antes de reconectar...`);
 
-                // Cancela timer anterior se existir
+
                 if (reconnectTimer) {
                     clearTimeout(reconnectTimer);
                 }
 
                 reconnectTimer = setTimeout(() => {
-                    reconnectAttempts = 0; // Reset ao reconectar por desconexão normal
-                    forbidden403Attempts = 0; // Reset contador de erro 403
+                    reconnectAttempts = 0; 
+                    forbidden403Attempts = 0; 
                     startNazu();
                 }, reconnectDelay);
             }
@@ -1782,7 +1734,7 @@ async function createBotSocket(authDir) {
 }
 
 async function startNazu() {
-    // Evita múltiplas instâncias sendo criadas ao mesmo tempo
+
     if (isReconnecting) {
         console.log('⚠️ Reconexão já em andamento, ignorando chamada duplicada...');
         return;
@@ -1790,30 +1742,16 @@ async function startNazu() {
 
     isReconnecting = true;
 
-     /*
-     CORREÇÃO: try/finally garante que isReconnecting SEMPRE volta para false,
-     independente do caminho de execução.
-     Antes, qualquer exceção inesperada dentro de createBotSocket() que não fosse
-     capturada pelo catch deixava isReconnecting = true para sempre, travando toda
-     reconexão futura silenciosamente.
-     */
     try {
-         /*
-         CORREÇÃO: reconnectAttempts NÃO é mais resetado aqui.
-         Antes, era zerado logo ao entrar — ou seja, antes de qualquer tentativa ter sucesso.
-         Isso fazia o limite MAX_RECONNECT_ATTEMPTS nunca ser atingido (o contador
-         era apagado a cada ciclo). O reset correto acontece no evento 'connection.update'
-         quando connection === 'open', confirmando conexão real.
-         */
         console.log('🚀 Iniciando Nazuna...');
 
         await createBotSocket(AUTH_DIR);
-        // isReconnecting = false é feito no finally abaixo
+
     } catch (err) {
         reconnectAttempts++;
         console.error(`❌ Erro ao iniciar o bot (tentativa ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}): ${err.message}`);
 
-        // Se excedeu tentativas, para de tentar
+
         if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
             console.error(`❌ Máximo de tentativas de reconexão alcançado (${MAX_RECONNECT_ATTEMPTS}). Parando...`);
             process.exit(1);
@@ -1829,11 +1767,11 @@ async function startNazu() {
             }
         }
 
-        // Delay exponencial (backoff) para evitar spam de conexões
+
         const delay = Math.min(RECONNECT_DELAY_BASE * Math.pow(1.5, reconnectAttempts - 1), 60000);
         console.log(`🔄 Aguardando ${Math.round(delay / 1000)} segundos antes de tentar novamente...`);
 
-        // Cancela timer anterior se existir
+
         if (reconnectTimer) {
             clearTimeout(reconnectTimer);
         }
@@ -1842,19 +1780,16 @@ async function startNazu() {
             startNazu();
         }, delay);
     } finally {
-        // CORREÇÃO: isReconnecting sempre liberado aqui — tanto em sucesso quanto em erro.
+
         isReconnecting = false;
     }
 }
 
-/**
- * Função unificada para desligamento gracioso
- */
 async function gracefulShutdown(signal) {
     const signalName = signal === 'SIGTERM' ? 'SIGTERM' : 'SIGINT';
     console.log(`📡 ${signalName} recebido, parando bot graciosamente...`);
 
-    // Cancela qualquer timer de reconexão pendente
+
     if (reconnectTimer) {
         clearTimeout(reconnectTimer);
         reconnectTimer = null;
@@ -1863,14 +1798,14 @@ async function gracefulShutdown(signal) {
 
     let shutdownTimeout;
 
-    // Timeout de segurança para forçar saída após 15 segundos
+
     shutdownTimeout = setTimeout(() => {
         console.error('⚠️ Timeout de shutdown, forçando saída...');
         process.exit(1);
     }, 15000);
 
     try {
-        // Desconecta sub-bots
+
         try {
             const subBotManagerModule = await import('./utils/subBotManager.js');
             const subBotManager = subBotManagerModule.default ?? subBotManagerModule;
@@ -1880,17 +1815,17 @@ async function gracefulShutdown(signal) {
             console.error('❌ Erro ao desconectar sub-bots:', error.message);
         }
 
-        // Limpa recursos
+
         if (cacheCleanupInterval) {
             clearInterval(cacheCleanupInterval);
             cacheCleanupInterval = null;
         }
 
-        // Finaliza fila de mensagens
+
         await messageQueue.shutdown();
         console.log('✅ MessageQueue finalizado');
 
-        // Finaliza otimizador
+
         await performanceOptimizer.shutdown();
         console.log('✅ Performance optimizer finalizado');
 
@@ -1908,13 +1843,6 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 process.on('uncaughtException', async (error) => {
-     /*
-     CORREÇÃO: Antes, o handler apenas logava o erro e não fazia nada.
-     Erros não capturados em Promises matavam o WebSocket interno silenciosamente,
-     mas o processo continuava "vivo" sem conexão ativa — o bot aparecia rodando
-     mas não respondia. Agora chama process.exit(1) para que o PM2/supervisor
-     reinicie o processo limpo e com uma nova conexão.
-     */
     console.error('🚨 Erro não capturado — reiniciando processo:', error.message);
     console.error(error.stack);
 
@@ -1929,16 +1857,9 @@ process.on('uncaughtException', async (error) => {
     process.exit(1);
 });
 
- /*
- CORREÇÃO: Handler de unhandledRejection estava completamente ausente.
- Sem ele, Promises rejeitadas em listeners async do Baileys (que são void)
- eram swallowed silenciosamente — o bot ficava num estado inconsistente sem log.
- No Node 15+, unhandledRejection também derruba o processo sem stack trace útil.
- */
 process.on('unhandledRejection', (reason, promise) => {
     console.error('🚨 Promise rejeitada sem tratamento:', reason);
-    // Não chama process.exit aqui pois rejeições não críticas são comuns
-    // em eventos do Baileys. O importante é logar para diagnóstico.
+
 });
 
 export { rentalExpirationManager, messageQueue };

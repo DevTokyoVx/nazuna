@@ -1373,78 +1373,107 @@ async function makeCognimaRequest(modelo, texto, systemPrompt = null, historico 
     throw new Error('Parâmetros obrigatórios ausentes: modelo e texto');
   }
 
-  // Note: parametro `key` é ignorado; usar `IA_API_KEY` hardcoded definido no topo.
-
   const messages = [];
 
   if (systemPrompt) {
-    messages.push({ role: 'system', content: systemPrompt });
+    messages.push({
+      role: 'system',
+      content: systemPrompt
+    });
   }
 
-  if (historico && historico.length > 0) {
+  if (Array.isArray(historico) && historico.length > 0) {
     const cleanHistory = historico.map(msg => {
-      const cleanMsg = { role: msg.role, content: msg.content };
+      const cleanMsg = {
+        role: msg.role,
+        content: msg.content
+      };
+
       if (msg.name) {
-        const sanitizedName = msg.name.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 64);
+        const sanitizedName = msg.name
+          .replace(/[^a-zA-Z0-9_-]/g, '_')
+          .substring(0, 64);
+
         if (sanitizedName) {
           cleanMsg.name = sanitizedName;
         }
       }
+
       return cleanMsg;
     });
+
     messages.push(...cleanHistory);
   }
 
-  messages.push({ role: 'user', content: texto });
+  messages.push({
+    role: 'user',
+    content: texto
+  });
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      // Usar API da NVIDIA diretamente
+      console.log(`🤖 Modelo usado: ${modelo}`);
+      console.log(`📨 Mensagens enviadas: ${messages.length}`);
+
       const response = await axios.post(
         'https://integrate.api.nvidia.com/v1/chat/completions',
         {
-          messages,
           model: modelo,
+          messages,
           temperature: 0.7,
-          max_tokens: 2000
+          max_tokens: 512,
+          stream: false
         },
         {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${IA_API_KEY}`
-          },
+headers: {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': `Bearer ${IA_API_KEY}`
+},
           timeout: 120000
         }
       );
 
-      if (!response.data || !response.data.choices || !response.data.choices[0]) {
-        throw new Error('Resposta da API inválida');
+      if (
+        !response.data ||
+        !response.data.choices ||
+        !response.data.choices[0]
+      ) {
+        throw new Error('Resposta da NVIDIA inválida ou vazia');
       }
 
-      // sucesso — sem checagem de API key centralizada
-
-      // Formatar resposta para manter compatibilidade
       return {
         success: true,
         data: response.data
       };
 
     } catch (error) {
-      console.warn(`Tentativa ${attempt + 1} falhou:`, {
+
+      console.warn(`❌ Tentativa ${attempt + 1} falhou`);
+
+      console.log({
         status: error.response?.status,
-        message: error.response?.data?.message || error.message
+        data: error.response?.data,
+        message: error.message
       });
 
-      // retry handling — sem marcar status de API key
       if (attempt === retries - 1) {
-        throw new Error(`Falha na requisição após ${retries} tentativas: ${error.response?.data?.message || error.message}`);
+        throw new Error(
+          `Falha na requisição após ${retries} tentativas: ${
+            error.response?.data?.detail ||
+            error.response?.data?.message ||
+            error.message
+          }`
+        );
       }
 
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+      // espera antes de tentar novamente
+      await new Promise(resolve =>
+        setTimeout(resolve, (attempt + 1) * 3000)
+      );
     }
   }
 }
-
 function cleanWhatsAppFormatting(texto) {
   if (!texto || typeof texto !== 'string') return texto;
   return texto
@@ -1858,17 +1887,16 @@ async function processUserMessages(data, nazu = null, ownerNumber = null, person
       let result;
       try {
         // Chamada única para processamento com contexto
-        const response = (await makeCognimaRequest(
-          'moonshotai/kimi-k2.6',
-          JSON.stringify(userInput),
-          selectedPrompt,
-          historico[userId] || []
-        )).data;
+const response = (await makeCognimaRequest(
+  'meta/llama-3.1-70b-instruct',
+  JSON.stringify(userInput),
+  selectedPrompt,
+  historico[userId] || []
+)).data;
 
-        if (!response || !response.choices || !response.choices[0]) {
-          throw new Error("Resposta da API Cognima foi inválida ou vazia.");
-        }
-
+if (!response || !response.choices || !response.choices[0]) {
+  throw new Error("Resposta da API Cognima foi inválida ou vazia.");
+}
         const content = response.choices[0].message.content;
         result = extractJSON(content);
 

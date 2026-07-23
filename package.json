@@ -1,6 +1,6 @@
 {
     "name": "nazuna",
-    "version": "10.1.0",
+    "version": "10.2.0",
     "description": "Bot de whatsapp atualizada",
     "type": "module",
     "main": "dados/src/connect.js",

@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/STATUS-ATIVO-success?style=for-the-badge" alt="Status: Ativo" />
   
-  <img src="https://img.shields.io/badge/VERSÃO-v10.1.0-blue?style=for-the-badge" alt="Versão" />
+  <img src="https://img.shields.io/badge/VERSÃO-v10.2.0-blue?style=for-the-badge" alt="Versão" />
   
   <img src="https://img.shields.io/github/stars/DevTokyoVx/nazuna?style=for-the-badge&color=yellow&label=Estrelas" alt="Estrelas" />
   
@@ -56,7 +56,7 @@
 ## 🆕 Novidades da Última Atualização
 
 <p align="center">
-  <img src="https://img.shields.io/badge/VERSÃO-v10.1.0-blue?style=for-the-badge" alt="v10.1.0" />
+  <img src="https://img.shields.io/badge/VERSÃO-v10.2.0-blue?style=for-the-badge" alt="v10.2.0" />
 </p>
 
 <details open>
@@ -64,10 +64,7 @@
 
 <br>
 
-- Correção da criação da JSON global de configurações para o bemvindo
-- Correção da assistente nazuna (não tem mais erro de cache)
-- Comandos que estavam com erros foram removidos e serão adicionados novamente em futuras atualizações
-
+- corrigir IA da NVidia (modo assistente nazuna)
 </details>
 
 <details open>
@@ -75,7 +72,8 @@
 
 <br>
 
-- `anticategoria` — ativa/desativa todos os antis de uma categoria de uma só vez (ex: `#anticategoria links` ativa todos os antis de links)
+- colocar para desativar foto do bem vindo 
+- colocar para ter foto no legendasaiu
 - Repositório agora sobe com a pasta `node_modules` incluída, pois alguns usuários no Termux não conseguem baixar as dependências corretamente
 
 </details>
@@ -85,8 +83,6 @@
 
 <br>
 
-- `menuias`
-- Scrapers sem utilidade da última versão feita pelo hiduy
 
 </details>
 

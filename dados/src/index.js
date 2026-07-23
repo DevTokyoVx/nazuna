@@ -604,7 +604,9 @@ async function createGroupMessage(NazunaSock, groupMetadata, participants, setti
     mentions
   };
 
-  if (settings.photoType === 'api' && isWelcome) {
+  if (settings.photo === false) {
+    // Foto de boas-vindas desativada explicitamente: não envia imagem em nenhuma hipótese.
+  } else if (settings.photoType === 'api' && isWelcome) {
     let profilePicUrl = 'https://raw.githubusercontent.com/nazuninha/uploads/main/outros/1747053564257_bzswae.bin';
 
     if (participants.length === 1) {
@@ -4760,34 +4762,35 @@ const getFileBuffer = async (mediakey, mediaType, options = {}) => {
             return;
           }
         }
+if (antitoxic && antitoxic.isEnabled && antitoxic.isEnabled(from) && body && ia) {
+  const aiFunction = (prompt) => {
+    return ia.makeCognimaRequest('meta/llama-3.3-70b-instruct', prompt, null)
+      .then(response => response?.data?.choices?.[0]?.message?.content || '');
+  };
 
-        if (antitoxic && antitoxic.isEnabled && antitoxic.isEnabled(from) && body && ia) {
-          const aiFunction = (prompt) => {
-            return ia.makeCognimaRequest('qwen/qwen3-235b-a22b', prompt, null)
-              .then(response => response?.data?.choices?.[0]?.message?.content || '');
-          };
-
-          antitoxic.analyzeMessage(body, aiFunction).then(toxicResult => {
-            if (toxicResult.isToxic) {
-              const action = antitoxic.getGroupAction ? antitoxic.getGroupAction(from) : 'avisar';
-              if (action === 'apagar') {
-                nazu.sendMessage(from, { delete: info.key }).then(() => {
-                  nazu.sendMessage(from, {
-                    text: `⚠️ @${sender.split('@')[0]}, sua mensagem foi removida por conteúdo tóxico.\n\n_Este sistema usa IA e pode cometer erros._`,
-                    mentions: [sender]
-                  });
-                });
-              } else if (action === 'avisar') {
-                nazu.sendMessage(from, {
-                  text: `⚠️ @${sender.split('@')[0]}, evite mensagens tóxicas!\n\n_Este sistema usa IA e pode cometer erros._`,
-                  mentions: [sender]
-                });
-              }
-            }
-          }).catch(toxicErr => {
-            console.warn('[ANTITOXIC] Error:', toxicErr.message);
+  antitoxic.analyzeMessage(body, aiFunction).then(toxicResult => {
+    if (toxicResult.isToxic) {
+      const action = antitoxic.getGroupAction ? antitoxic.getGroupAction(from) : 'avisar';
+      if (action === 'apagar') {
+        nazu.sendMessage(from, { delete: info.key }).then(() => {
+          nazu.sendMessage(from, {
+            text: `⚠️ @${sender.split('@')[0]}, sua mensagem foi removida por conteúdo tóxico.\n\n_Este sistema usa IA e pode cometer erros._`,
+            mentions: [sender]
           });
-        }
+        });
+      } else if (action === 'avisar') {
+        nazu.sendMessage(from, {
+          text: `⚠️ @${sender.split('@')[0]}, evite mensagens tóxicas!\n\n_Este sistema usa IA e pode cometer erros._`,
+          mentions: [sender]
+        });
+      }
+    }
+  }).catch(toxicErr => {
+    console.warn('[ANTITOXIC] Error:', toxicErr.message);
+  });
+}
+
+
 
         if (isGroup && antipalavra && body && !isCmd) {
           try {
@@ -13499,7 +13502,8 @@ ${conversaTexto.substring(0, 8000)}
 
 Faça um resumo conciso mas completo, destacando o que é mais relevante.`;
 
-          return ia.makeCognimaRequest('abacusai/dracarys-llama-3.1-70b-instruct', prompt, null);
+return ia.makeCognimaRequest('meta/llama-3.3-70b-instruct', prompt, null);
+  
         }).then(response => {
           return reply(`💬 *Resumo da Conversa* (últimas mensagens)\n\n${formatAIResponse(response.data.choices[0].message.content)}`);
         }).catch(e => {
@@ -13563,7 +13567,8 @@ Faça um resumo conciso mas completo, destacando o que é mais relevante.`;
 
 Seja criativo e original. Não use clichês. A história deve ser envolvente do início ao fim.`;
 
-          const response = await ia.makeCognimaRequest('qwen/qwen3-235b-a22b', prompt, null);
+const response = await ia.makeCognimaRequest('meta/llama-3.3-70b-instruct', prompt, null);
+  
           await reply(`📖✨ *Sua História*\n\n${formatAIResponse(response.data.choices[0].message.content)}`);
         } catch (e) {
           console.error('Erro ao gerar história:', e);
@@ -13619,8 +13624,8 @@ Para cada recomendação, forneça:
 4. Nota de popularidade (de 1 a 10)
 
 Seja específico e recomende opções variadas (populares e menos conhecidas). Formate de forma clara e organizada.`;
+const response = await ia.makeCognimaRequest('meta/llama-3.3-70b-instruct', prompt, null);
 
-          const response = await ia.makeCognimaRequest('qwen/qwen3-235b-a22b', prompt, null);
           await reply(`${tipoInfo.emoji} *Recomendações de ${tipoInfo.nome.charAt(0).toUpperCase() + tipoInfo.nome.slice(1)}*\n\n${formatAIResponse(response.data.choices[0].message.content)}`);
         } catch (e) {
           console.error('Erro ao gerar recomendações:', e);
@@ -15648,12 +15653,13 @@ Exemplo: ${prefix}tradutor espanhol | Olá mundo! ✨`);
           const texto = partes.slice(1).join('|').trim();
           reply('Aguarde um momentinho... ☀️').then(() => {
             const prompt = `Traduza o seguinte texto para ${idioma}:\n\n${texto}\n\nForneça apenas a tradução, sem explicações adicionais.`;
-            ia.makeCognimaRequest('qwen/qwen3-235b-a22b', prompt, null).then((bahz) => {
-              reply(`🌐✨ *Prontinho! Sua tradução para ${idioma.toUpperCase()} está aqui:*\n\n${formatAIResponse(bahz.data.choices[0].message.content)}`);
-            }).catch((e) => {
-              console.error("Erro ao traduzir texto:", e);
-              reply("❌ Não foi possível realizar a tradução no momento. Tente novamente mais tarde.");
-            });
+ia.makeCognimaRequest('meta/llama-3.3-70b-instruct', prompt, null).then((bahz) => {
+  reply(`🌐✨ *Prontinho! Sua tradução para ${idioma.toUpperCase()} está aqui:*\n\n${formatAIResponse(bahz.data.choices[0].message.content)}`);
+}).catch((e) => {
+  console.error("Erro ao traduzir texto:", e);
+  reply("❌ Não foi possível realizar a tradução no momento. Tente novamente mais tarde.");
+});
+   
           });
         }
         break;
@@ -28269,6 +28275,7 @@ Exemplos:
             if (action === 'on' || action === 'ativar') {
 
 
+              groupData.welcome.photo = true;
               groupData.welcome.photoType = 'api';
               delete groupData.welcome.image; // limpa imagem antiga se tiver
               writeJsonFile(buildGroupFilePath(from), groupData);
@@ -28278,6 +28285,8 @@ Exemplos:
             } else if (action === 'off' || action === 'desativar') {
 
               groupData.welcome.photo = false;
+              delete groupData.welcome.photoType; // sem isso, a foto continuava sendo enviada
+              delete groupData.welcome.image;
               writeJsonFile(buildGroupFilePath(from), groupData);
 
               await reply("✅ Foto de boas-vindas DESATIVADA!");
@@ -28312,6 +28321,7 @@ Exemplos:
 
             if (action === 'api') {
 
+              groupData.welcome.photo = true;
               groupData.welcome.photoType = 'api';
               delete groupData.welcome.image;
 
@@ -28331,6 +28341,7 @@ Exemplos:
 
               if (!uploadResult) throw new Error('Falha ao fazer upload da imagem');
 
+              groupData.welcome.photo = true;
               groupData.welcome.photoType = 'custom';
               groupData.welcome.image = uploadResult;
 
@@ -28427,19 +28438,54 @@ Exemplos:
         {
           if (!isGroup) return reply("isso so pode ser usado em grupo 💔");
           if (!isGroupAdmin) return reply("você precisa ser adm 💔");
-          if (!isQuotedImage && !isImage) return reply('❌ Marque uma imagem ou envie uma imagem com o comando!');
-          try {
-            const media = await getFileBuffer(isQuotedImage ? info.message.extendedTextMessage.contextInfo.quotedMessage.imageMessage : info.message.imageMessage, 'image');
-            const uploadResult = await upload(media);
-            if (!uploadResult) throw new Error('Falha ao fazer upload da imagem');
-            if (!groupData.exit) {
 
+          try {
+            const action = (q || '').toLowerCase().trim();
+
+            if (!groupData.exit) {
               groupData.exit = {};
             }
 
-            groupData.exit.image = uploadResult;
-            writeJsonFile(buildGroupFilePath(from), groupData);
-            await reply('✅ Foto de saída configurada com sucesso!');
+            if (!isQuotedImage && !isImage && (action === 'on' || action === 'ativar')) {
+
+              // Ativa a foto de saída usando o card gerado automaticamente (foto de perfil de quem saiu)
+              groupData.exit.photo = true;
+              groupData.exit.photoType = 'api';
+              delete groupData.exit.image; // limpa imagem custom antiga, se tiver
+              writeJsonFile(buildGroupFilePath(from), groupData);
+
+              const exitMsgHint = groupData.exit.enabled ? '' : `\n\n⚠️ As mensagens de saída estão desativadas. Use ${prefix}saida para ativá-las.`;
+              await reply(`✅ Foto de saída ATIVADA!\n\nSe quiser usar uma imagem personalizada, marque/envie uma imagem com ${prefix}${command}.${exitMsgHint}`);
+
+            } else if (!isQuotedImage && !isImage && (action === 'off' || action === 'desativar')) {
+
+              groupData.exit.photo = false;
+              delete groupData.exit.photoType; // sem isso, a foto continuaria sendo enviada
+              delete groupData.exit.image;
+              writeJsonFile(buildGroupFilePath(from), groupData);
+
+              await reply("✅ Foto de saída DESATIVADA!");
+
+            } else if (isQuotedImage || isImage) {
+
+              const media = await getFileBuffer(isQuotedImage ? info.message.extendedTextMessage.contextInfo.quotedMessage.imageMessage : info.message.imageMessage, 'image');
+              const uploadResult = await upload(media);
+              if (!uploadResult) throw new Error('Falha ao fazer upload da imagem');
+
+              groupData.exit.photo = true;
+              groupData.exit.photoType = 'custom';
+              groupData.exit.image = uploadResult;
+              writeJsonFile(buildGroupFilePath(from), groupData);
+
+              await reply('✅ Foto de saída personalizada configurada com sucesso!');
+
+            } else {
+
+              const status = groupData.exit.photo ? 'ATIVADO' : 'DESATIVADO';
+              await reply(`🤔 Uso:\n${prefix}${command} on - Ativa a foto de saída (gerada automaticamente)\n${prefix}${command} off - Desativa a foto de saída\n${prefix}${command} + marque/envie uma imagem - Define uma foto personalizada\n\n📊 Status atual: ${status}`);
+
+            }
+
           } catch (error) {
             console.error(error);
             reply("ocorreu um erro 💔");
