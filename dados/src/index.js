@@ -1543,6 +1543,17 @@ async function NazuninhaBotExec(nazu, info, store, messagesCache, rentalExpirati
     30000, // 30 segundos
     (path) => loadJsonFile(path)
   );
+  const configgeral = fs.readFileSync(
+    DATABASE_DIR + '/global.json',
+    'utf-8'
+  );
+
+  const geral = JSON.parse(configgeral);
+
+
+
+
+
   const premiumListaZinha = await optimizer.getCachedFile(
     DONO_DIR + '/premium.json',
     60000, // 1 minuto
@@ -2305,6 +2316,7 @@ async function NazuninhaBotExec(nazu, info, store, messagesCache, rentalExpirati
       : botNumber;
 
     const isBotAdmin = !isGroup || !botNumberLid ? false : idInArray(botNumberLid, groupAdmins);
+    const isSimilaridade = geral.ativacoes.similaridade;
 
     let isGroupAdmin = false;
     if (isGroup) {
@@ -20595,12 +20607,10 @@ Se não definir cores, a API usa padrão automaticamente.`
 │ ☁️ *Hospedagem oficial*
 │ Vex Hostinger: https://vexhost.com.br
 │
-│ 📞 *Suporte:* wa.me/553285076326
-│
-│ 💶 *Ajude o projeto a se manter online!*
-│
-│ https://nubank.com.br/cobrar/133oy9/6a39d128-5419-4b04-a105-b7bd2d290c65
-│
+│ 📞 *Suporte:* wa.me/vextechsolutions
+
+      
+││
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━╯
 
 > Use *${prefix}zipbot* para baixar o código!`;
@@ -20735,7 +20745,6 @@ Se não definir cores, a API usa padrão automaticamente.`
       case 'nazuna':
         try {
           const lerMaisPrefix = getMenuLerMaisText();
-          const cleanLink = 'https://nubank.com.br/cobrar/133oy9/6a39d128-5419-4b04-a105-b7bd2d290c65';
 
           const texto =
             `🍓 *NAZUNA BOT*
@@ -20756,13 +20765,12 @@ ${lerMaisPrefix}
 https://vexapi.com.br
 ${lerMaisPrefix}
 📞 *Dev Tokyo:*
-wa.me/553285076326
+wa.me/vextechsolutions
 
 Responde em até 24 horas
 ${lerMaisPrefix}
 
-💶 *Incentive o desenvolvimento da nazuna bot*
-${cleanLink}
+
 `;
 
           const imgPath = __dirname + '/../midias/menu.jpg';
@@ -21728,6 +21736,35 @@ Precisa de ajuda? Entre em contato:
           await reply("Ocorreu um erro 💔");
         }
         break;
+
+      case 'similaridade':
+        try {
+          if (!isOwner) {
+            return reply("Este comando é apenas para o meu dono 💔");
+          }
+
+          geral.ativacoes.similaridade = !geral.ativacoes.similaridade;
+
+          fs.writeFileSync(
+            DATABASE_DIR + '/global.json',
+            JSON.stringify(geral, null, 2),
+            'utf-8'
+          );
+
+          await reply(
+            `✅ Similaridade ${geral.ativacoes.similaridade ? 'ativada' : 'desativada'}! O bot agora ${geral.ativacoes.similaridade
+              ? 'informa sobre comandos parecidos.'
+              : 'não informa sobre comandos parecidos.'
+            }`
+          );
+        } catch (e) {
+          console.error('Erro ao alterar similaridade:', e);
+          await reply("Ocorreu um erro 💔");
+        }
+        break;
+
+
+
       case 'entrar':
         try {
           if (!isOwner) return reply("Este comando é apenas para o meu dono 💔");
@@ -23942,6 +23979,7 @@ ${prefix}togglecmdvip premium_ia off`);
       case 'jornal':
       case 'cinema':
       case 'desfoque':
+      case 'camera':
         try {
           if (!isQuotedImage) return reply('❌ Marque uma imagem.');
 
@@ -33384,6 +33422,63 @@ ${prefix}wl.add @usuario | antilink,antistatus`);
           console.log("⚠️ Falha ao seguir canal:", e?.message || e);
         }
 
+
+
+
+
+        function calcssimili(a, b) {
+          a = a.toLowerCase();
+          b = b.toLowerCase();
+
+          const maior = Math.max(a.length, b.length);
+          if (!maior) return 100;
+
+          let anterior = Array.from(
+            { length: b.length + 1 },
+            (_, i) => i
+          );
+
+          for (let i = 1; i <= a.length; i++) {
+            const atual = [i];
+
+            for (let j = 1; j <= b.length; j++) {
+              const custo = a[i - 1] === b[j - 1] ? 0 : 1;
+
+              atual[j] = Math.min(
+                anterior[j] + 1,
+                atual[j - 1] + 1,
+                anterior[j - 1] + custo
+              );
+            }
+
+            anterior = atual;
+          }
+
+          return Math.round((1 - anterior[b.length] / maior) * 100);
+        }
+
+        function searchcmdparecido(command) {
+          const codigo = fs.readFileSync(__filename, "utf8");
+
+          const comandos = [
+            ...codigo.matchAll(/\bcase\s+['"]([^'"]+)['"]\s*:/g)
+          ].map(match => match[1]);
+
+          const digitado = command.toLowerCase();
+
+          return [...new Set(comandos)]
+            .filter(nome => nome.toLowerCase() !== digitado)
+            .map(nome => ({
+              nome,
+              porcentagem: calcssimili(digitado, nome)
+            }))
+            .filter(item => item.porcentagem >= 30)
+            .sort((a, b) => b.porcentagem - a.porcentagem)
+            .slice(0, 3);
+        }
+
+
+
         if (isCmd) {
           try {
             const canais = [
@@ -33403,7 +33498,30 @@ ${prefix}wl.add @usuario | antilink,antistatus`);
 
           if (cmdNotFoundConfig.enabled) {
             const userName = pushname || getUserName(sender);
-            const commandName = command || body.trim().slice(groupPrefix.length).split(/ +/).shift().trim();
+
+            const commandName =
+              command ||
+              body.trim().slice(groupPrefix.length).split(/\s+/)[0].trim();
+
+            let ficha = "";
+
+            if (isSimilaridade) {
+              const semelhantes = searchcmdparecido(commandName);
+
+              ficha = semelhantes.length
+                ? [
+                  "╭━━〔 🔎 COMANDOS PARECIDOS 〕",
+                  ...semelhantes.map(
+                    item => `┃ ✦ ${groupPrefix}${item.nome} — ${item.porcentagem}%`
+                  ),
+                  "╰━━━━━━━━━━━━━━━━"
+                ].join("\n")
+                : [
+                  "╭━━〔 🔎 BUSCA DE COMANDOS 〕",
+                  "┃ Nenhum comando parecido encontrado.",
+                  "╰━━━━━━━━━━━━━━━━"
+                ].join("\n");
+            }
 
             const notFoundMessage = formatMessageWithFallback(
               cmdNotFoundConfig.message,
@@ -33412,20 +33530,25 @@ ${prefix}wl.add @usuario | antilink,antistatus`);
                 prefix: groupPrefix,
                 user: sender,
                 botName: nomebot,
-                userName: userName
+                userName
               },
-              '❌ Comando não encontrado! Tente ' + groupPrefix + 'menu para ver todos os comandos disponíveis.'
+              `❌ Comando não encontrado! Tente ${groupPrefix}menu para ver todos os comandos disponíveis.`
             );
 
             try {
-              await reply(notFoundMessage);
+              await reply(
+                isSimilaridade
+                  ? `${notFoundMessage}\n\n${ficha}`
+                  : notFoundMessage
+              );
             } catch (error) {
-              await nazu.react('❌', { key: info.key });
+              await nazu.react("❌", { key: info.key });
             }
           } else {
-            await nazu.react('❌', { key: info.key });
+            await nazu.react("❌", { key: info.key });
           }
         }
+
         const msgPrefix = loadMsgPrefix();
         if (['prefix', 'prefixo'].includes(budy2) && msgPrefix) {
           await reply(msgPrefix.replace('#prefixo#', prefix));

@@ -110,6 +110,10 @@ ensureJsonFileExists(GLOBAL_SETTINGS_FILE, {
     fundo: "https://i.pinimg.com/1200x/03/a0/6f/03a06fc163ae2eab7cee95bd77ff1119.jpg",
     corMoldura: "black",
     corLinhas: "white"
+  },
+
+  "ativacoes": {
+    "similaridade": false
   }
 });
 

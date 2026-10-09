@@ -1425,11 +1425,11 @@ async function makeCognimaRequest(modelo, texto, systemPrompt = null, historico 
           stream: false
         },
         {
-headers: {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'Authorization': `Bearer ${IA_API_KEY}`
-},
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${IA_API_KEY}`
+          },
           timeout: 120000
         }
       );
@@ -1459,10 +1459,9 @@ headers: {
 
       if (attempt === retries - 1) {
         throw new Error(
-          `Falha na requisição após ${retries} tentativas: ${
-            error.response?.data?.detail ||
-            error.response?.data?.message ||
-            error.message
+          `Falha na requisição após ${retries} tentativas: ${error.response?.data?.detail ||
+          error.response?.data?.message ||
+          error.message
           }`
         );
       }
@@ -1886,17 +1885,18 @@ async function processUserMessages(data, nazu = null, ownerNumber = null, person
 
       let result;
       try {
-        // Chamada única para processamento com contexto
-const response = (await makeCognimaRequest(
-  'meta/llama-3.1-70b-instruct',
-  JSON.stringify(userInput),
-  selectedPrompt,
-  historico[userId] || []
-)).data;
 
-if (!response || !response.choices || !response.choices[0]) {
-  throw new Error("Resposta da API Cognima foi inválida ou vazia.");
-}
+
+        const response = (await makeCognimaRequest(
+          'nvidia/nemotron-3-super-120b-a12b',
+          JSON.stringify(userInput),
+          selectedPrompt,
+          historico[userId] || []
+        )).data
+
+        if (!response || !response.choices || !response.choices[0]) {
+          throw new Error("Resposta da API Cognima foi inválida ou vazia.");
+        }
         const content = response.choices[0].message.content;
         result = extractJSON(content);
 

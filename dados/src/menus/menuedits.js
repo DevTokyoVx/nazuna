@@ -17,5 +17,6 @@ ${middleBorder}${menuItemIcon}${prefix}cinema
 ${middleBorder}${menuItemIcon}${prefix}blackwhite
 ${middleBorder}${menuItemIcon}${prefix}desfoque
 ${middleBorder}${menuItemIcon}${prefix}wojakreaction
+${middleBorder}${menuItemIcon}${prefix}camera
 ${bottomBorder}`;
 }
